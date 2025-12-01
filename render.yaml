@@ -3,7 +3,7 @@ services:
     name: eduxo-api
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn backend.app:app
     healthCheckPath: /
     envVars:
       - key: PYTHON_VERSION
