@@ -21,7 +21,7 @@ const EduxoDashboard = () => {
   const [predictionResult, setPredictionResult] = useState(null);
   
   // URL da API - MUDE AQUI depois do deploy no Render
-  const API_URL = 'http://localhost:5000';
+  const API_URL = 'https://eduxo-api.onrender.com';
   
   useEffect(() => {
     loadData();
@@ -452,3 +452,4 @@ Desenvolvedores: Luís Lopes & Jonathas Villalba`;
 };
 
 export default EduxoDashboard;
+
