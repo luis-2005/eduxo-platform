@@ -530,9 +530,9 @@
 
     <script>
         const API_URL = '';
+        let initialized = false;
         
         let riskChart, classChart;
-        let studentsData = [];
         let allStudentsData = [];
 
         // Função para alternar entre abas
@@ -560,7 +560,15 @@
 
         async function loadData() {
             try {
-                // Buscar dados consolidados do dashboard
+                // 1. Inicializar o banco de dados se ainda não foi feito
+                if (!initialized) {
+                    const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
+                    const initData = await initRes.json();
+                    console.log('Backend Initialization:', initData);
+                    initialized = true;
+                }
+
+                // 2. Buscar dados consolidados do dashboard
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
                 const dashboardData = await dashboardRes.json();
                 
@@ -576,26 +584,28 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
                 
-                // Buscar TODOS os alunos
+                // 3. Buscar TODOS os alunos (sem filtros)
                 const studentsRes = await fetch(`${API_URL}/api/students`);
                 allStudentsData = await studentsRes.json();
                 
                 console.log('Total de alunos carregados:', allStudentsData.length);
                 console.log('Alunos de alto risco:', allStudentsData.filter(s => s.risk_level === 'Alto').length);
                 
-                // Atualizar gráficos
+                // 4. Atualizar gráficos
                 updateCharts(stats, classesData);
                 
-                // Atualizar tabela de alunos críticos (APENAS Alto Risco)
+                // 5. Atualizar tabela de alunos críticos (APENAS Alto Risco)
                 const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
                 updateCriticalTable(highRiskStudents);
                 
-                // Atualizar tabela de todos os alunos
+                // 6. Atualizar tabela de todos os alunos e aplicar filtros iniciais
                 updateAllStudentsTable(allStudentsData);
                 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                showError('Erro ao conectar com o servidor. Verifique sua conexão.');
+                // Se houver erro, garantir que todas as tabelas mostrem o erro
+                showError('Erro ao conectar com o servidor ou inicializar o banco de dados. Verifique o console para mais detalhes.');
+                updateAllStudentsTable([]); // Garante que a tabela de todos os alunos saia do estado de carregamento infinito
             }
         }
 
@@ -927,10 +937,12 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
         }
 
         function showError(message) {
-            const tbody = document.getElementById('critical-students-table');
-            tbody.innerHTML = `
+            const criticalTbody = document.getElementById('critical-students-table');
+            const allTbody = document.getElementById('all-students-table');
+            
+            const errorHtml = `
                 <tr>
-                    <td colspan="7" class="text-center py-12">
+                    <td colspan="8" class="text-center py-12">
                         <div class="flex flex-col items-center gap-3">
                             <i class="fas fa-exclamation-circle text-red-400 text-5xl"></i>
                             <p class="text-white text-lg font-semibold">Erro ao carregar dados</p>
@@ -942,6 +954,10 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
                     </td>
                 </tr>
             `;
+            
+            criticalTbody.innerHTML = errorHtml;
+            allTbody.innerHTML = errorHtml;
+            document.getElementById('filtered-count').textContent = '0';
         }
 
         // Carregar dados ao iniciar

@@ -221,85 +221,57 @@ def populate_initial_data():
                         INSERT INTO alerts (student_id, alert_type, message, severity)
                         VALUES (%s, %s, %s, %s)
                     ''', (student_id, alert_type, message, severity))
-            
-            # Criar alertas para alunos de risco médio (menos frequente)
-            elif risk_level == 'Médio' and random.random() > 0.6:
-                cur.execute('''
-                    INSERT INTO alerts (student_id, alert_type, message, severity)
-                    VALUES (%s, %s, %s, %s)
-                ''', (
-                    student_id,
-                    'Atenção Necessária',
-                    f'{nome} necessita acompanhamento',
-                    'Média'
-                ))
-            
-            # Criar intervenções para alguns alunos de alto risco
-            if risk_level == 'Alto' and random.random() > 0.5:
-                intervention_types = [
-                    'Reunião com Responsáveis',
-                    'Acompanhamento Pedagógico',
-                    'Apoio Psicológico',
-                    'Reforço Escolar',
-                    'Visita Domiciliar'
-                ]
-                
-                cur.execute('''
-                    INSERT INTO interventions (student_id, intervention_type, description, status)
-                    VALUES (%s, %s, %s, %s)
-                    RETURNING id
-                ''', (
-                    student_id,
-                    random.choice(intervention_types),
-                    f'Intervenção necessária devido aos indicadores de risco',
-                    random.choice(['Pendente', 'Em Andamento', 'Concluída'])
-                ))
         
-        # Estatísticas mensais dos últimos 12 meses
-        for month_offset in range(12, 0, -1):
-            month_date = datetime.now() - timedelta(days=30 * month_offset)
-            total = 200
-            high = random.randint(25, 40)
-            medium = random.randint(45, 60)
-            low = total - high - medium
+        # Criar dados de evolução mensal (últimos 6 meses)
+        for i in range(6):
+            month = datetime.now() - timedelta(days=30*i)
+            
+            # Simular tendência de melhora ao longo do tempo
+            high_risk = random.randint(35 - i*2, 45 - i*2)
+            medium_risk = random.randint(55 - i, 65 - i)
+            low_risk = 200 - high_risk - medium_risk
             
             cur.execute('''
                 INSERT INTO monthly_stats 
                 (month, total_students, high_risk, medium_risk, low_risk, avg_attendance, avg_grades)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             ''', (
-                month_date.date(),
-                total,
-                high,
-                medium,
-                low,
-                random.uniform(72, 82),
-                random.uniform(6.0, 7.5)
+                month.date(),
+                200,
+                high_risk,
+                medium_risk,
+                low_risk,
+                random.uniform(70, 80),
+                random.uniform(6, 7.5)
             ))
         
         conn.commit()
-        print(f"✅ Banco de dados populado com {200} alunos!")
     
     cur.close()
     conn.close()
 
-# Inicializar banco ao iniciar
-try:
-    init_db()
-    populate_initial_data()
-except Exception as e:
-    print(f"Erro ao inicializar banco: {e}")
-
+# Rotas da API
 @app.route('/')
-def index():
-    return send_from_directory('../frontend', 'index.html')
+def serve_frontend():
+    """Serve o frontend"""
+    return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/api/students', methods=['GET'])
+@app.route('/api/init', methods=['POST'])
+def initialize():
+    """Inicializa o banco de dados"""
+    try:
+        init_db()
+        populate_initial_data()
+        return jsonify({'message': 'Banco de dados inicializado com sucesso'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/students')
 def get_students():
-    """Retorna lista de alunos com filtros"""
-    class_filter = request.args.get('class')
-    risk_filter = request.args.get('risk')
-    search = request.args.get('search', '').strip()
+    """Retorna lista de alunos com filtros opcionais"""
+    risk_level = request.args.get('risk_level')
+    class_name = request.args.get('class')
+    search = request.args.get('search')
     
     conn = get_db_connection()
     cur = conn.cursor()
@@ -307,17 +279,17 @@ def get_students():
     query = 'SELECT * FROM students WHERE 1=1'
     params = []
     
-    if class_filter and class_filter != 'Todas':
-        query += ' AND class = %s'
-        params.append(class_filter)
-    
-    if risk_filter and risk_filter != 'Todos':
+    if risk_level:
         query += ' AND risk_level = %s'
-        params.append(risk_filter)
+        params.append(risk_level)
+    
+    if class_name:
+        query += ' AND class = %s'
+        params.append(class_name)
     
     if search:
-        query += ' AND name ILIKE %s'
-        params.append(f'%{search}%')
+        query += ' AND LOWER(name) LIKE %s'
+        params.append(f'%{search.lower()}%')
     
     query += ' ORDER BY risk_score DESC'
     
@@ -329,27 +301,30 @@ def get_students():
     
     return jsonify(students)
 
-@app.route('/api/students/<int:student_id>', methods=['GET'])
+@app.route('/api/students/<int:student_id>')
 def get_student(student_id):
     """Retorna detalhes de um aluno específico"""
     conn = get_db_connection()
     cur = conn.cursor()
     
+    # Dados do aluno
     cur.execute('SELECT * FROM students WHERE id = %s', (student_id,))
     student = cur.fetchone()
     
     if not student:
+        cur.close()
+        conn.close()
         return jsonify({'error': 'Aluno não encontrado'}), 404
     
-    # Buscar alertas do aluno
+    # Alertas do aluno
     cur.execute('''
         SELECT * FROM alerts 
         WHERE student_id = %s 
-        ORDER BY created_at DESC LIMIT 10
+        ORDER BY created_at DESC
     ''', (student_id,))
     alerts = cur.fetchall()
     
-    # Buscar intervenções do aluno
+    # Intervenções do aluno
     cur.execute('''
         SELECT * FROM interventions 
         WHERE student_id = %s 
@@ -366,38 +341,6 @@ def get_student(student_id):
         'interventions': interventions
     })
 
-@app.route('/api/students', methods=['POST'])
-def create_student():
-    """Cria um novo aluno"""
-    data = request.json
-    
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    cur.execute('''
-        INSERT INTO students 
-        (name, class, attendance, grades, participation, absences, socioeconomic, risk_score, risk_level)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        RETURNING id
-    ''', (
-        data['name'],
-        data['class'],
-        data.get('attendance', 0),
-        data.get('grades', 0),
-        data.get('participation', 0),
-        data.get('absences', 0),
-        data.get('socioeconomic', 3.0),
-        data.get('risk_score', 0),
-        data.get('risk_level', 'Baixo')
-    ))
-    
-    student_id = cur.fetchone()['id']
-    conn.commit()
-    cur.close()
-    conn.close()
-    
-    return jsonify({'id': student_id, 'message': 'Aluno criado com sucesso'}), 201
-
 @app.route('/api/students/<int:student_id>', methods=['PUT'])
 def update_student(student_id):
     """Atualiza dados de um aluno"""
@@ -406,14 +349,14 @@ def update_student(student_id):
     conn = get_db_connection()
     cur = conn.cursor()
     
-    # Recalcular risk_score se dados relevantes mudaram
-    if any(k in data for k in ['attendance', 'grades', 'participation', 'absences', 'socioeconomic']):
-        attendance = data.get('attendance', 0)
-        grades = data.get('grades', 0)
-        participation = data.get('participation', 0)
-        absences = data.get('absences', 0)
-        socioeconomic = data.get('socioeconomic', 3.0)
-        
+    # Recalcular risk_score se os dados mudaram
+    attendance = data.get('attendance')
+    grades = data.get('grades')
+    participation = data.get('participation')
+    absences = data.get('absences')
+    socioeconomic = data.get('socioeconomic')
+    
+    if all([attendance, grades, participation, absences, socioeconomic]):
         risk_score = (
             (100 - attendance) * 0.3 +
             (10 - grades) * 10 * 0.25 +
@@ -421,26 +364,16 @@ def update_student(student_id):
             absences * 0.15 +
             (6 - socioeconomic) * 4 * 0.1
         )
-        
         risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
-        data['risk_score'] = round(risk_score, 2)
-        data['risk_level'] = risk_level
-    
-    # Construir query de atualização dinamicamente
-    fields = []
-    values = []
-    for key, value in data.items():
-        if key != 'id':
-            fields.append(f"{key} = %s")
-            values.append(value)
-    
-    values.append(student_id)
-    
-    cur.execute(f'''
-        UPDATE students 
-        SET {', '.join(fields)}, updated_at = CURRENT_TIMESTAMP
-        WHERE id = %s
-    ''', values)
+        
+        cur.execute('''
+            UPDATE students 
+            SET attendance = %s, grades = %s, participation = %s, 
+                absences = %s, socioeconomic = %s, risk_score = %s, 
+                risk_level = %s, updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+        ''', (attendance, grades, participation, absences, socioeconomic, 
+              round(risk_score, 2), risk_level, student_id))
     
     conn.commit()
     cur.close()
@@ -448,27 +381,9 @@ def update_student(student_id):
     
     return jsonify({'message': 'Aluno atualizado com sucesso'})
 
-@app.route('/api/stats')
-def get_stats():
-    """Retorna estatísticas gerais (Proxy para /api/dashboard)"""
-    data = get_dashboard_data().get_json()
-    return jsonify(data['stats'])
-
-@app.route('/api/classes')
-def get_classes():
-    """Retorna estatísticas por turma (Proxy para /api/dashboard)"""
-    data = get_dashboard_data().get_json()
-    return jsonify(data['classes'])
-
-@app.route('/api/trends')
-def get_trends():
-    """Retorna evolução temporal dos dados (Proxy para /api/dashboard)"""
-    data = get_dashboard_data().get_json()
-    return jsonify(data['trends'])
-
 @app.route('/api/dashboard')
-def get_dashboard_data():
-    """Retorna todos os dados necessários para o dashboard em uma única requisição"""
+def get_dashboard():
+    """Retorna dados agregados para o dashboard"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -486,7 +401,6 @@ def get_dashboard_data():
     ''')
     stats = cur.fetchone()
     
-    # Alertas não resolvidos
     cur.execute('SELECT COUNT(*) as count FROM alerts WHERE resolved = FALSE')
     unresolved_alerts = cur.fetchone()['count']
     
