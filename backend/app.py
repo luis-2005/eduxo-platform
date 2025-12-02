@@ -24,9 +24,15 @@ def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
     
+    # Forçar DROP das tabelas para garantir a repopulação com os novos dados
+    cur.execute('DROP TABLE IF EXISTS alerts CASCADE')
+    cur.execute('DROP TABLE IF EXISTS interventions CASCADE')
+    cur.execute('DROP TABLE IF EXISTS monthly_stats CASCADE')
+    cur.execute('DROP TABLE IF EXISTS students CASCADE')
+    
     # Tabela de alunos
     cur.execute('''
-        CREATE TABLE IF NOT EXISTS students (
+        CREATE TABLE students (
             id SERIAL PRIMARY KEY,
             name VARCHAR(200) NOT NULL,
             class VARCHAR(10) NOT NULL,
@@ -44,7 +50,7 @@ def init_db():
     
     # Tabela de histórico de alertas
     cur.execute('''
-        CREATE TABLE IF NOT EXISTS alerts (
+        CREATE TABLE alerts (
             id SERIAL PRIMARY KEY,
             student_id INTEGER REFERENCES students(id),
             alert_type VARCHAR(50) NOT NULL,
@@ -57,7 +63,7 @@ def init_db():
     
     # Tabela de intervenções
     cur.execute('''
-        CREATE TABLE IF NOT EXISTS interventions (
+        CREATE TABLE interventions (
             id SERIAL PRIMARY KEY,
             student_id INTEGER REFERENCES students(id),
             intervention_type VARCHAR(100) NOT NULL,
@@ -70,7 +76,7 @@ def init_db():
     
     # Tabela de evolução mensal
     cur.execute('''
-        CREATE TABLE IF NOT EXISTS monthly_stats (
+        CREATE TABLE monthly_stats (
             id SERIAL PRIMARY KEY,
             month DATE NOT NULL,
             total_students INTEGER,
@@ -88,10 +94,12 @@ def init_db():
     conn.close()
 
 def populate_initial_data():
-    """Popula dados iniciais se o banco estiver vazio"""
+    """Popula dados iniciais (agora sempre roda após o DROP)"""
     conn = get_db_connection()
     cur = conn.cursor()
     
+    # Como as tabelas foram dropadas em init_db, a contagem será 0
+    # Não precisamos mais do if count == 0, mas vou manter a estrutura para clareza
     cur.execute('SELECT COUNT(*) as count FROM students')
     count = cur.fetchone()['count']
     
