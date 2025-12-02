@@ -96,24 +96,67 @@ def populate_initial_data():
     count = cur.fetchone()['count']
     
     if count == 0:
-        nomes_alunos = ['Miguel', 'Davi', 'Gabriel', 'Arthur', 'Lucas', 'Matheus', 'Pedro', 'Guilherme', 'Gustavo', 'Rafael', 'Felipe', 'Bernardo', 'Enzo', 'Nicolas', 'João Pedro', 'Cauã', 'Vitor', 'Eduardo', 'Daniel', 'Henrique', 'Murilo', 'Vinicius', 'Samuel', 'Pietro', 'João Vitor', 'Leonardo', 'Caio', 'Heitor', 'Lorenzo', 'Isaac', 'Lucca', 'Thiago', 'João Gabriel', 'João', 'Alexandre', 'Bruno', 'Benício', 'Ryan', 'Emanuel', 'Fernando', 'Joaquim', 'André', 'Tomás', 'Francisco', 'Rodrigo', 'Igor', 'Otávio', 'Augusto', 'Sophia', 'Alice', 'Julia', 'Isabella', 'Manuela', 'Laura', 'Luiza', 'Valentina', 'Giovanna', 'Maria Eduarda', 'Helena', 'Beatriz', 'Maria Luiza', 'Lara', 'Mariana', 'Nicole', 'Rafaela', 'Heloísa', 'Isadora', 'Lívia', 'Maria Clara', 'Ana Clara', 'Lorena', 'Gabriela', 'Yasmin', 'Isabelly', 'Sarah', 'Ana Julia', 'Letícia', 'Ana Luiza', 'Melissa', 'Marina', 'Clara', 'Cecília', 'Esther', 'Emanuelly', 'Rebeca', 'Ana Beatriz', 'Lavínia', 'Vitória', 'Bianca', 'Catarina', 'Larissa', 'Maria Fernanda', 'Fernanda', 'Amanda', 'Alícia', 'Carolina', 'Agatha', 'Gabrielly']
-        classes = ['1A', '1B', '2A', '2B', '3A', '3B']
+        # Lista expandida de nomes brasileiros
+        nomes_masculinos = [
+            'Miguel Silva', 'Davi Santos', 'Gabriel Oliveira', 'Arthur Costa', 'Lucas Souza',
+            'Matheus Ferreira', 'Pedro Rodrigues', 'Guilherme Almeida', 'Gustavo Lima', 'Rafael Pereira',
+            'Felipe Carvalho', 'Bernardo Ribeiro', 'Enzo Martins', 'Nicolas Araújo', 'João Pedro Dias',
+            'Cauã Fernandes', 'Vitor Gomes', 'Eduardo Cardoso', 'Daniel Rocha', 'Henrique Barbosa',
+            'Murilo Castro', 'Vinicius Nascimento', 'Samuel Moreira', 'Pietro Pinto', 'João Vitor Monteiro',
+            'Leonardo Freitas', 'Caio Duarte', 'Heitor Teixeira', 'Lorenzo Barros', 'Isaac Cavalcanti',
+            'Lucca Azevedo', 'Thiago Mendes', 'João Gabriel Correia', 'João Moraes', 'Alexandre Nunes',
+            'Bruno Rezende', 'Benício Campos', 'Ryan Cardoso', 'Emanuel Farias', 'Fernando Vieira',
+            'Joaquim Ramos', 'André Nogueira', 'Tomás Cunha', 'Francisco Batista', 'Rodrigo Melo',
+            'Igor Peixoto', 'Otávio Lopes', 'Augusto Torres', 'Marcelo Santana', 'Fábio Cruz'
+        ]
         
-        for i in range(100):
-            # Lógica para criar dados críticos (10% dos alunos)
-            if i < 10: 
-                attendance = random.uniform(40, 60)
-                grades = random.uniform(3, 5)
-                participation = random.uniform(30, 50)
-                absences = random.randint(15, 30)
-                socioeconomic = random.uniform(1, 2)
-            else:
-                attendance = random.uniform(60, 100)
-                grades = random.uniform(5, 10)
-                participation = random.uniform(50, 100)
-                absences = int((100 - attendance) * 0.4)
-                socioeconomic = random.uniform(2, 5)
+        nomes_femininos = [
+            'Sophia Oliveira', 'Alice Santos', 'Julia Silva', 'Isabella Costa', 'Manuela Souza',
+            'Laura Ferreira', 'Luiza Rodrigues', 'Valentina Almeida', 'Giovanna Lima', 'Maria Eduarda Pereira',
+            'Helena Carvalho', 'Beatriz Ribeiro', 'Maria Luiza Martins', 'Lara Araújo', 'Mariana Dias',
+            'Nicole Fernandes', 'Rafaela Gomes', 'Heloísa Cardoso', 'Isadora Rocha', 'Lívia Barbosa',
+            'Maria Clara Castro', 'Ana Clara Nascimento', 'Lorena Moreira', 'Gabriela Pinto', 'Yasmin Monteiro',
+            'Isabelly Freitas', 'Sarah Duarte', 'Ana Julia Teixeira', 'Letícia Barros', 'Ana Luiza Cavalcanti',
+            'Melissa Azevedo', 'Marina Mendes', 'Clara Correia', 'Cecília Moraes', 'Esther Nunes',
+            'Emanuelly Rezende', 'Rebeca Campos', 'Ana Beatriz Cardoso', 'Lavínia Farias', 'Vitória Vieira',
+            'Bianca Ramos', 'Catarina Nogueira', 'Larissa Cunha', 'Maria Fernanda Batista', 'Fernanda Melo',
+            'Amanda Peixoto', 'Alícia Lopes', 'Carolina Torres', 'Agatha Santana', 'Gabrielly Cruz'
+        ]
+        
+        todos_nomes = nomes_masculinos + nomes_femininos
+        random.shuffle(todos_nomes)
+        
+        classes = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C']
+        
+        # Criar 200 alunos com diferentes perfis de risco
+        for i in range(200):
+            nome = todos_nomes[i % len(todos_nomes)]
             
+            # 15% dos alunos em situação CRÍTICA (Alto Risco)
+            if i < 30:
+                attendance = random.uniform(30, 55)
+                grades = random.uniform(2.5, 4.5)
+                participation = random.uniform(20, 45)
+                absences = random.randint(20, 40)
+                socioeconomic = random.uniform(1.0, 2.0)
+            
+            # 25% dos alunos em situação de RISCO MÉDIO
+            elif i < 80:
+                attendance = random.uniform(55, 75)
+                grades = random.uniform(4.5, 6.5)
+                participation = random.uniform(45, 65)
+                absences = random.randint(10, 20)
+                socioeconomic = random.uniform(2.0, 3.5)
+            
+            # 60% dos alunos em situação NORMAL (Baixo Risco)
+            else:
+                attendance = random.uniform(75, 98)
+                grades = random.uniform(6.5, 10)
+                participation = random.uniform(65, 95)
+                absences = random.randint(0, 10)
+                socioeconomic = random.uniform(3.0, 5.0)
+            
+            # Cálculo do score de risco
             risk_score = (
                 (100 - attendance) * 0.3 +
                 (10 - grades) * 10 * 0.25 +
@@ -128,8 +171,9 @@ def populate_initial_data():
                 INSERT INTO students 
                 (name, class, attendance, grades, participation, absences, socioeconomic, risk_score, risk_level)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
             ''', (
-                random.choice(nomes_alunos),
+                nome,
                 random.choice(classes),
                 round(attendance, 2),
                 round(grades, 2),
@@ -140,36 +184,78 @@ def populate_initial_data():
                 risk_level
             ))
             
+            student_id = cur.fetchone()['id']
+            
             # Criar alertas para alunos de alto risco
             if risk_level == 'Alto':
+                alert_types = [
+                    ('Frequência Crítica', f'{nome} tem frequência de apenas {attendance:.1f}%', 'Alta'),
+                    ('Notas Baixas', f'{nome} está com média {grades:.1f}', 'Alta'),
+                    ('Risco de Evasão', f'{nome} apresenta múltiplos indicadores de risco', 'Alta')
+                ]
+                
+                for alert_type, message, severity in alert_types[:random.randint(1, 2)]:
+                    cur.execute('''
+                        INSERT INTO alerts (student_id, alert_type, message, severity)
+                        VALUES (%s, %s, %s, %s)
+                    ''', (student_id, alert_type, message, severity))
+            
+            # Criar alertas para alunos de risco médio (menos frequente)
+            elif risk_level == 'Médio' and random.random() > 0.6:
                 cur.execute('''
                     INSERT INTO alerts (student_id, alert_type, message, severity)
                     VALUES (%s, %s, %s, %s)
                 ''', (
-                    i + 1,
-                    'Risco de Evasão',
-                    f'O aluno com ID {i + 1} apresenta alto risco de evasão escolar',
-                    'Alta'
+                    student_id,
+                    'Atenção Necessária',
+                    f'{nome} necessita acompanhamento',
+                    'Média'
+                ))
+            
+            # Criar intervenções para alguns alunos de alto risco
+            if risk_level == 'Alto' and random.random() > 0.5:
+                intervention_types = [
+                    'Reunião com Responsáveis',
+                    'Acompanhamento Pedagógico',
+                    'Apoio Psicológico',
+                    'Reforço Escolar',
+                    'Visita Domiciliar'
+                ]
+                
+                cur.execute('''
+                    INSERT INTO interventions (student_id, intervention_type, description, status)
+                    VALUES (%s, %s, %s, %s)
+                ''', (
+                    student_id,
+                    random.choice(intervention_types),
+                    f'Intervenção necessária devido aos indicadores de risco',
+                    random.choice(['Pendente', 'Em Andamento', 'Concluída'])
                 ))
         
-        # Estatísticas mensais dos últimos 6 meses
-        for month_offset in range(6, 0, -1):
+        # Estatísticas mensais dos últimos 12 meses
+        for month_offset in range(12, 0, -1):
             month_date = datetime.now() - timedelta(days=30 * month_offset)
+            total = 200
+            high = random.randint(25, 40)
+            medium = random.randint(45, 60)
+            low = total - high - medium
+            
             cur.execute('''
                 INSERT INTO monthly_stats 
                 (month, total_students, high_risk, medium_risk, low_risk, avg_attendance, avg_grades)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             ''', (
                 month_date.date(),
-                100,
-                random.randint(15, 30),
-                random.randint(30, 45),
-                random.randint(25, 40),
-                random.uniform(75, 85),
-                random.uniform(6.5, 7.5)
+                total,
+                high,
+                medium,
+                low,
+                random.uniform(72, 82),
+                random.uniform(6.0, 7.5)
             ))
         
         conn.commit()
+        print(f"✅ Banco de dados populado com {200} alunos!")
     
     cur.close()
     conn.close()
