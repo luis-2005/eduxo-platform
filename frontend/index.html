@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' );
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         * {
             font-family: 'Inter', sans-serif;
@@ -77,6 +77,19 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .hidden-section {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
@@ -94,9 +107,10 @@
                 </div>
                 
                 <div class="hidden md:flex items-center gap-6">
-                    <a href="#dashboard" class="text-white hover:text-purple-300 transition font-medium">Dashboard</a>
-                    <a href="#analytics" class="text-white hover:text-purple-300 transition font-medium">Analytics</a>
-                    <a href="#students" class="text-white hover:text-purple-300 transition font-medium">Alunos</a>
+                    <a href="#dashboard" onclick="showTab('dashboard')" class="text-white hover:text-purple-300 transition font-medium">Dashboard</a>
+                    <a href="#analytics" onclick="showTab('analytics')" class="text-white hover:text-purple-300 transition font-medium">Analytics</a>
+                    <a href="#critical" onclick="showTab('critical')" class="text-white hover:text-purple-300 transition font-medium">Alunos Críticos</a>
+                    <a href="#all-students" onclick="showTab('all-students')" class="text-white hover:text-purple-300 transition font-medium">Todos os Alunos</a>
                     <div class="h-6 w-px bg-white/20"></div>
                     <button onclick="loadData()" class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition font-medium">
                         <i class="fas fa-sync"></i>
@@ -127,227 +141,312 @@
             </p>
         </div>
 
-        <!-- Filtros Modernos -->
-        <div class="glass-effect rounded-2xl p-6 mb-8 fade-in">
-            <div class="flex flex-col md:flex-row items-center gap-4">
-                <div class="flex items-center gap-3 text-white">
-                    <i class="fas fa-filter text-purple-400 text-xl"></i>
-                    <span class="font-semibold">Filtros:</span>
+        <!-- Tabs de Navegação -->
+        <div class="glass-effect rounded-2xl p-4 mb-8 fade-in">
+            <div class="flex flex-wrap gap-3">
+                <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-button active px-6 py-3 rounded-xl font-semibold text-white">
+                    <i class="fas fa-chart-line mr-2"></i>Dashboard
+                </button>
+                <button onclick="showTab('analytics')" id="tab-analytics" class="tab-button px-6 py-3 rounded-xl font-semibold text-purple-300 bg-purple-500/10">
+                    <i class="fas fa-chart-pie mr-2"></i>Analytics
+                </button>
+                <button onclick="showTab('critical')" id="tab-critical" class="tab-button px-6 py-3 rounded-xl font-semibold text-purple-300 bg-purple-500/10">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>Alunos Críticos
+                </button>
+                <button onclick="showTab('all-students')" id="tab-all-students" class="tab-button px-6 py-3 rounded-xl font-semibold text-purple-300 bg-purple-500/10">
+                    <i class="fas fa-users mr-2"></i>Todos os Alunos
+                </button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: Dashboard -->
+        <div id="section-dashboard">
+            <!-- Cards de Estatísticas com Design Moderno -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Card Alto Risco -->
+                <div class="card-hover bg-gradient-to-br from-red-500 to-red-700 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fas fa-exclamation-triangle text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">CRÍTICO</span>
+                        </div>
+                        <p class="text-red-100 text-sm font-medium mb-1">Alto Risco</p>
+                        <p class="text-4xl font-bold mb-2" id="high-risk">-</p>
+                        <p class="text-xs text-red-100/80">alunos necessitam atenção imediata</p>
+                    </div>
                 </div>
                 
-                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                    <div class="relative">
-                        <label class="text-purple-300 text-sm font-medium mb-2 block">Turma</label>
-                        <select id="class-filter" onchange="loadData()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                            <option>Todas</option>
-                            <option>1A</option>
-                            <option>1B</option>
-                            <option>2A</option>
-                            <option>2B</option>
-                            <option>3A</option>
-                            <option>3B</option>
+                <!-- Card Médio Risco -->
+                <div class="card-hover bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fas fa-exclamation-circle text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-orange-900/50 px-3 py-1 rounded-full">ATENÇÃO</span>
+                        </div>
+                        <p class="text-amber-100 text-sm font-medium mb-1">Médio Risco</p>
+                        <p class="text-4xl font-bold mb-2" id="medium-risk">-</p>
+                        <p class="text-xs text-amber-100/80">alunos em monitoramento</p>
+                    </div>
+                </div>
+                
+                <!-- Card Baixo Risco -->
+                <div class="card-hover bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fas fa-check-circle text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">ESTÁVEL</span>
+                        </div>
+                        <p class="text-green-100 text-sm font-medium mb-1">Baixo Risco</p>
+                        <p class="text-4xl font-bold mb-2" id="low-risk">-</p>
+                        <p class="text-xs text-green-100/80">alunos em situação regular</p>
+                    </div>
+                </div>
+                
+                <!-- Card Total -->
+                <div class="card-hover bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fas fa-users text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-blue-900/50 px-3 py-1 rounded-full">TOTAL</span>
+                        </div>
+                        <p class="text-blue-100 text-sm font-medium mb-1">Total de Alunos</p>
+                        <p class="text-4xl font-bold mb-2" id="total-students">-</p>
+                        <p class="text-xs text-blue-100/80">matriculados no sistema</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards Adicionais -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Card Frequência Média -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-purple-500/20 p-3 rounded-xl">
+                                <i class="fas fa-calendar-check text-purple-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
+                        </div>
+                        <p class="text-purple-300 text-sm font-medium mb-1">Frequência Média</p>
+                        <p class="text-4xl font-bold mb-2" id="avg-attendance">-</p>
+                        <p class="text-xs text-purple-300/80">em todas as turmas</p>
+                    </div>
+                </div>
+                
+                <!-- Card Nota Média -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-purple-500/20 p-3 rounded-xl">
+                                <i class="fas fa-graduation-cap text-purple-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
+                        </div>
+                        <p class="text-purple-300 text-sm font-medium mb-1">Nota Média</p>
+                        <p class="text-4xl font-bold mb-2" id="avg-grades">-</p>
+                        <p class="text-xs text-purple-300/80">em todas as disciplinas</p>
+                    </div>
+                </div>
+                
+                <!-- Card Alertas Não Resolvidos -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-red-500/20 p-3 rounded-xl">
+                                <i class="fas fa-bell text-red-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">PENDENTE</span>
+                        </div>
+                        <p class="text-red-300 text-sm font-medium mb-1">Alertas Não Resolvidos</p>
+                        <p class="text-4xl font-bold mb-2" id="unresolved-alerts">-</p>
+                        <p class="text-xs text-red-300/80">necessitam de intervenção</p>
+                    </div>
+                </div>
+                
+                <!-- Card Tendência de Risco -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-green-500/20 p-3 rounded-xl">
+                                <i class="fas fa-chart-line text-green-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">TENDÊNCIA</span>
+                        </div>
+                        <p class="text-green-300 text-sm font-medium mb-1">Tendência de Risco</p>
+                        <p class="text-4xl font-bold mb-2">Estável</p>
+                        <p class="text-xs text-green-300/80">últimos 30 dias</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: Analytics -->
+        <div id="section-analytics" class="hidden-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-white text-2xl font-bold">Distribuição de Risco</h3>
+                        <div class="bg-purple-500/20 p-2 rounded-lg">
+                            <i class="fas fa-chart-pie text-purple-400"></i>
+                        </div>
+                    </div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-white text-2xl font-bold">Risco por Turma</h3>
+                        <div class="bg-indigo-500/20 p-2 rounded-lg">
+                            <i class="fas fa-chart-bar text-indigo-400"></i>
+                        </div>
+                    </div>
+                    <canvas id="classChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: Alunos Críticos -->
+        <div id="section-critical" class="hidden-section">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-white text-2xl font-bold mb-2">Alunos em Situação Crítica</h3>
+                        <p class="text-purple-300 text-sm">Monitoramento prioritário e intervenção imediata</p>
+                    </div>
+                    <div class="bg-red-500/20 p-3 rounded-xl">
+                        <i class="fas fa-user-shield text-red-400 text-2xl"></i>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-purple-500/30">
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nome</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Turma</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Frequência</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="critical-students-table">
+                            <tr>
+                                <td colspan="7" class="text-center py-8">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="loading-spinner"></div>
+                                        <p class="text-purple-300">Carregando dados...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO: Todos os Alunos (NOVA) -->
+        <div id="section-all-students" class="hidden-section">
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-white text-2xl font-bold mb-2">Todos os Alunos</h3>
+                        <p class="text-purple-300 text-sm">Busca e visualização completa de todos os alunos cadastrados</p>
+                    </div>
+                    <div class="bg-blue-500/20 p-3 rounded-xl">
+                        <i class="fas fa-users text-blue-400 text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- Barra de Busca e Filtros -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-1">
+                        <label class="text-purple-300 text-sm font-medium mb-2 block">Buscar por Nome</label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="search-student" 
+                                placeholder="Digite o nome do aluno..." 
+                                onkeyup="filterAllStudents()"
+                                class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                            >
+                            <i class="fas fa-search absolute left-3 top-4 text-purple-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="text-purple-300 text-sm font-medium mb-2 block">Filtrar por Turma</label>
+                        <select id="all-class-filter" onchange="filterAllStudents()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            <option value="">Todas as Turmas</option>
+                            <option value="1A">1A</option>
+                            <option value="1B">1B</option>
+                            <option value="1C">1C</option>
+                            <option value="2A">2A</option>
+                            <option value="2B">2B</option>
+                            <option value="2C">2C</option>
+                            <option value="3A">3A</option>
+                            <option value="3B">3B</option>
+                            <option value="3C">3C</option>
                         </select>
                     </div>
                     
-                    <div class="relative">
-                        <label class="text-purple-300 text-sm font-medium mb-2 block">Nível de Risco</label>
-                        <select id="risk-filter" onchange="loadData()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                            <option>Todos</option>
-                            <option>Alto</option>
-                            <option>Médio</option>
-                            <option>Baixo</option>
+                    <div>
+                        <label class="text-purple-300 text-sm font-medium mb-2 block">Filtrar por Risco</label>
+                        <select id="all-risk-filter" onchange="filterAllStudents()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                            <option value="">Todos os Níveis</option>
+                            <option value="Alto">Alto Risco</option>
+                            <option value="Médio">Médio Risco</option>
+                            <option value="Baixo">Baixo Risco</option>
                         </select>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Cards de Estatísticas com Design Moderno -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Card Alto Risco -->
-            <div class="card-hover bg-gradient-to-br from-red-500 to-red-700 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-white/20 p-3 rounded-xl">
-                            <i class="fas fa-exclamation-triangle text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">CRÍTICO</span>
-                    </div>
-                    <p class="text-red-100 text-sm font-medium mb-1">Alto Risco</p>
-                    <p class="text-4xl font-bold mb-2" id="high-risk">-</p>
-                    <p class="text-xs text-red-100/80">alunos necessitam atenção imediata</p>
+                <!-- Contador de Resultados -->
+                <div class="mb-4">
+                    <p class="text-purple-300 text-sm">
+                        <span id="filtered-count">0</span> alunos encontrados
+                    </p>
                 </div>
-            </div>
-            
-            <!-- Card Médio Risco -->
-            <div class="card-hover bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-white/20 p-3 rounded-xl">
-                            <i class="fas fa-exclamation-circle text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-orange-900/50 px-3 py-1 rounded-full">ATENÇÃO</span>
-                    </div>
-                    <p class="text-amber-100 text-sm font-medium mb-1">Médio Risco</p>
-                    <p class="text-4xl font-bold mb-2" id="medium-risk">-</p>
-                    <p class="text-xs text-amber-100/80">alunos em monitoramento</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-purple-500/30">
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nome</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Turma</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Frequência</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Participação</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Faltas</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nível de Risco</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-students-table">
+                            <tr>
+                                <td colspan="8" class="text-center py-8">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="loading-spinner"></div>
+                                        <p class="text-purple-300">Carregando dados...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            
-            <!-- Card Baixo Risco -->
-            <div class="card-hover bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-white/20 p-3 rounded-xl">
-                            <i class="fas fa-check-circle text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">ESTÁVEL</span>
-                    </div>
-                    <p class="text-green-100 text-sm font-medium mb-1">Baixo Risco</p>
-                    <p class="text-4xl font-bold mb-2" id="low-risk">-</p>
-                    <p class="text-xs text-green-100/80">alunos em situação regular</p>
-                </div>
-            </div>
-            
-            <!-- Card Total -->
-            <div class="card-hover bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-white/20 p-3 rounded-xl">
-                            <i class="fas fa-users text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-indigo-900/50 px-3 py-1 rounded-full">TOTAL</span>
-                    </div>
-                    <p class="text-blue-100 text-sm font-medium mb-1">Total de Alunos</p>
-                    <p class="text-4xl font-bold mb-2" id="total-students">-</p>
-                    <p class="text-xs text-blue-100/80">alunos monitorados</p>
-                </div>
-            </div>
-            
-            <!-- Card Frequência Média -->
-            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-purple-500/20 p-3 rounded-xl">
-                            <i class="fas fa-calendar-check text-purple-400 text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
-                    </div>
-                    <p class="text-purple-300 text-sm font-medium mb-1">Frequência Média</p>
-                    <p class="text-4xl font-bold mb-2" id="avg-attendance">-</p>
-                    <p class="text-xs text-purple-300/80">em todas as turmas</p>
-                </div>
-            </div>
-            
-            <!-- Card Nota Média -->
-            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-purple-500/20 p-3 rounded-xl">
-                            <i class="fas fa-graduation-cap text-purple-400 text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
-                    </div>
-                    <p class="text-purple-300 text-sm font-medium mb-1">Nota Média</p>
-                    <p class="text-4xl font-bold mb-2" id="avg-grades">-</p>
-                    <p class="text-xs text-purple-300/80">em todas as disciplinas</p>
-                </div>
-            </div>
-            
-            <!-- Card Alertas Não Resolvidos -->
-            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-red-500/20 p-3 rounded-xl">
-                            <i class="fas fa-bell text-red-400 text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">PENDENTE</span>
-                    </div>
-                    <p class="text-red-300 text-sm font-medium mb-1">Alertas Não Resolvidos</p>
-                    <p class="text-4xl font-bold mb-2" id="unresolved-alerts">-</p>
-                    <p class="text-xs text-red-300/80">necessitam de intervenção</p>
-                </div>
-            </div>
-            
-            <!-- Card Tendência de Risco -->
-            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="bg-green-500/20 p-3 rounded-xl">
-                            <i class="fas fa-chart-line text-green-400 text-3xl"></i>
-                        </div>
-                        <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">TENDÊNCIA</span>
-                    </div>
-                    <p class="text-green-300 text-sm font-medium mb-1">Tendência de Risco</p>
-                    <p class="text-4xl font-bold mb-2">Estável</p>
-                    <p class="text-xs text-green-300/80">últimos 30 dias</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gráficos -->
-        <div id="analytics" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-white text-2xl font-bold">Distribuição de Risco</h3>
-                    <div class="bg-purple-500/20 p-2 rounded-lg">
-                        <i class="fas fa-chart-pie text-purple-400"></i>
-                    </div>
-                </div>
-                <canvas id="riskChart"></canvas>
-            </div>
-            
-            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-white text-2xl font-bold">Risco por Turma</h3>
-                    <div class="bg-indigo-500/20 p-2 rounded-lg">
-                        <i class="fas fa-chart-bar text-indigo-400"></i>
-                    </div>
-                </div>
-                <canvas id="classChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Tabela de Alunos de Alto Risco -->
-        <div id="students" class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <h3 class="text-white text-2xl font-bold mb-2">Alunos em Situação Crítica</h3>
-                    <p class="text-purple-300 text-sm">Monitoramento prioritário e intervenção imediata</p>
-                </div>
-                <div class="bg-red-500/20 p-3 rounded-xl">
-                    <i class="fas fa-user-shield text-red-400 text-2xl"></i>
-                </div>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-purple-500/30">
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nome</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Turma</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Frequência</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
-                            <th class="text-purple-300 py-4 px-4 text-left font-semibold">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="students-table">
-                        <tr>
-                            <td colspan="7" class="text-center py-8">
-                                <div class="flex flex-col items-center gap-3">
-                                    <div class="loading-spinner"></div>
-                                    <p class="text-purple-300">Carregando dados...</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -414,7 +513,6 @@
                         <p class="text-purple-300 text-xs">
                             <i class="fas fa-university text-purple-400 mr-2"></i>
                             Projeto Integrador - Ciência de Dados  
-
                             <span class="text-purple-400 font-semibold">UNISO</span> | 2025
                         </p>
                     </div>
@@ -435,11 +533,32 @@
         
         let riskChart, classChart;
         let studentsData = [];
+        let allStudentsData = [];
+
+        // Função para alternar entre abas
+        function showTab(tabName) {
+            // Esconder todas as seções
+            document.getElementById('section-dashboard').classList.add('hidden-section');
+            document.getElementById('section-analytics').classList.add('hidden-section');
+            document.getElementById('section-critical').classList.add('hidden-section');
+            document.getElementById('section-all-students').classList.add('hidden-section');
+
+            // Remover classe active de todos os botões
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('bg-purple-500/10', 'text-purple-300');
+            });
+
+            // Mostrar seção selecionada
+            document.getElementById('section-' + tabName).classList.remove('hidden-section');
+
+            // Adicionar classe active ao botão selecionado
+            const activeBtn = document.getElementById('tab-' + tabName);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('bg-purple-500/10', 'text-purple-300');
+        }
 
         async function loadData() {
-            const classFilter = document.getElementById('class-filter').value;
-            const riskFilter = document.getElementById('risk-filter').value;
-            
             try {
                 // Buscar dados consolidados do dashboard
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
@@ -448,6 +567,7 @@
                 const stats = dashboardData.stats;
                 const classesData = dashboardData.classes;
                 
+                // Atualizar cards de estatísticas
                 document.getElementById('high-risk').textContent = stats.high_risk;
                 document.getElementById('medium-risk').textContent = stats.medium_risk;
                 document.getElementById('low-risk').textContent = stats.low_risk;
@@ -456,15 +576,22 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
                 
-                // Buscar alunos (sem filtro de risco, pois a tabela de alto risco precisa de todos)
-                const studentsRes = await fetch(`${API_URL}/api/students?class=${classFilter}`);
-                studentsData = await studentsRes.json();
+                // Buscar TODOS os alunos
+                const studentsRes = await fetch(`${API_URL}/api/students`);
+                allStudentsData = await studentsRes.json();
                 
+                console.log('Total de alunos carregados:', allStudentsData.length);
+                console.log('Alunos de alto risco:', allStudentsData.filter(s => s.risk_level === 'Alto').length);
+                
+                // Atualizar gráficos
                 updateCharts(stats, classesData);
                 
-                // Filtra e exibe APENAS os alunos de Alto Risco, respeitando o filtro de turma
-                const highRiskStudents = studentsData.filter(s => s.risk_level === 'Alto');
-                updateTable(highRiskStudents.slice(0, 15));
+                // Atualizar tabela de alunos críticos (APENAS Alto Risco)
+                const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
+                updateCriticalTable(highRiskStudents);
+                
+                // Atualizar tabela de todos os alunos
+                updateAllStudentsTable(allStudentsData);
                 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -597,8 +724,8 @@
             });
         }
 
-        function updateTable(students) {
-            const tbody = document.getElementById('students-table');
+        function updateCriticalTable(students) {
+            const tbody = document.getElementById('critical-students-table');
             
             if (students.length === 0) {
                 tbody.innerHTML = `
@@ -653,12 +780,110 @@
             `).join('');
         }
 
+        function updateAllStudentsTable(students) {
+            const tbody = document.getElementById('all-students-table');
+            
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-12">
+                            <div class="flex flex-col items-center gap-3">
+                                <i class="fas fa-info-circle text-blue-400 text-5xl"></i>
+                                <p class="text-white text-lg font-semibold">Nenhum aluno encontrado</p>
+                                <p class="text-purple-300 text-sm">Tente ajustar os filtros de busca</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('filtered-count').textContent = '0';
+                return;
+            }
+
+            document.getElementById('filtered-count').textContent = students.length;
+            
+            tbody.innerHTML = students.map((s) => {
+                let riskBadgeClass = '';
+                let riskIcon = '';
+                
+                if (s.risk_level === 'Alto') {
+                    riskBadgeClass = 'bg-gradient-to-r from-red-500 to-red-600';
+                    riskIcon = 'fa-exclamation-triangle';
+                } else if (s.risk_level === 'Médio') {
+                    riskBadgeClass = 'bg-gradient-to-r from-amber-500 to-orange-600';
+                    riskIcon = 'fa-exclamation-circle';
+                } else {
+                    riskBadgeClass = 'bg-gradient-to-r from-green-500 to-emerald-600';
+                    riskIcon = 'fa-check-circle';
+                }
+                
+                return `
+                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition group">
+                    <td class="text-white py-4 px-4 font-medium">${s.name}</td>
+                    <td class="text-white py-4 px-4">
+                        <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm font-medium">${s.class}</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 bg-slate-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full" style="width: ${s.attendance}%"></div>
+                            </div>
+                            <span class="text-sm">${s.attendance.toFixed(1)}%</span>
+                        </div>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <span class="font-semibold">${s.grades.toFixed(1)}</span>
+                        <span class="text-purple-300 text-sm">/10</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <span class="text-sm">${s.participation.toFixed(1)}%</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <span class="text-sm">${s.absences} falta${s.absences !== 1 ? 's' : ''}</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <span class="text-lg font-bold">${s.risk_score.toFixed(0)}%</span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="inline-flex items-center gap-2 ${riskBadgeClass} text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                            <i class="fas ${riskIcon}"></i>
+                            ${s.risk_level}
+                        </span>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function filterAllStudents() {
+            const searchTerm = document.getElementById('search-student').value.toLowerCase();
+            const classFilter = document.getElementById('all-class-filter').value;
+            const riskFilter = document.getElementById('all-risk-filter').value;
+
+            let filtered = allStudentsData;
+
+            // Filtrar por nome
+            if (searchTerm) {
+                filtered = filtered.filter(s => s.name.toLowerCase().includes(searchTerm));
+            }
+
+            // Filtrar por turma
+            if (classFilter) {
+                filtered = filtered.filter(s => s.class === classFilter);
+            }
+
+            // Filtrar por risco
+            if (riskFilter) {
+                filtered = filtered.filter(s => s.risk_level === riskFilter);
+            }
+
+            updateAllStudentsTable(filtered);
+        }
+
         function viewStudentDetails(studentId) {
             alert(`Funcionalidade de detalhes do aluno #${studentId} será implementada em breve.`);
         }
 
         function exportReport() {
-            const highRiskStudents = studentsData.filter(s => s.risk_level === 'Alto');
+            const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
             
             const report = `═══════════════════════════════════════════════════════════
 RELATÓRIO EDUXO - ANÁLISE DE EVASÃO ESCOLAR
@@ -667,10 +892,10 @@ Data: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeStr
 
 📊 ESTATÍSTICAS GERAIS
 ────────────────────────────────────────────────────────────
-Total de Alunos: ${studentsData.length}
+Total de Alunos: ${allStudentsData.length}
 Alunos de Alto Risco: ${highRiskStudents.length}
-Alunos de Médio Risco: ${studentsData.filter(s => s.risk_level === 'Médio').length}
-Alunos de Baixo Risco: ${studentsData.filter(s => s.risk_level === 'Baixo').length}
+Alunos de Médio Risco: ${allStudentsData.filter(s => s.risk_level === 'Médio').length}
+Alunos de Baixo Risco: ${allStudentsData.filter(s => s.risk_level === 'Baixo').length}
 
 🚨 ALUNOS EM SITUAÇÃO CRÍTICA (ALTO RISCO)
 ────────────────────────────────────────────────────────────
@@ -702,7 +927,7 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
         }
 
         function showError(message) {
-            const tbody = document.getElementById('students-table');
+            const tbody = document.getElementById('critical-students-table');
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center py-12">
@@ -727,4 +952,3 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
     </script>
 </body>
 </html>
-

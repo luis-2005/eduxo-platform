@@ -178,18 +178,16 @@ def populate_initial_data():
                 absences = random.randint(0, 10)
                 socioeconomic = random.uniform(3.0, 5.0)
             
-            # Cálculo do score de risco (Fórmula ajustada para ser mais agressiva)
-            # Aumentando o peso da Frequência e Notas
+            # Cálculo do score de risco
             risk_score = (
-                (100 - attendance) * 0.4 +  # Peso maior para baixa frequência
-                (10 - grades) * 10 * 0.3 +  # Peso maior para notas baixas
-                (100 - participation) * 0.15 +
-                absences * 0.1 +
-                (6 - socioeconomic) * 4 * 0.05
+                (100 - attendance) * 0.3 +
+                (10 - grades) * 10 * 0.25 +
+                (100 - participation) * 0.2 +
+                absences * 0.15 +
+                (6 - socioeconomic) * 4 * 0.1
             )
             
-            # Ajustando os limites para garantir a classificação correta
-            risk_level = 'Alto' if risk_score > 70 else 'Médio' if risk_score > 40 else 'Baixo'
+            risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
             
             cur.execute('''
                 INSERT INTO students 
@@ -417,14 +415,14 @@ def update_student(student_id):
         socioeconomic = data.get('socioeconomic', 3.0)
         
         risk_score = (
-            (100 - attendance) * 0.4 +
-            (10 - grades) * 10 * 0.3 +
-            (100 - participation) * 0.15 +
-            absences * 0.1 +
-            (6 - socioeconomic) * 4 * 0.05
+            (100 - attendance) * 0.3 +
+            (10 - grades) * 10 * 0.25 +
+            (100 - participation) * 0.2 +
+            absences * 0.15 +
+            (6 - socioeconomic) * 4 * 0.1
         )
         
-        risk_level = 'Alto' if risk_score > 70 else 'Médio' if risk_score > 40 else 'Baixo'
+        risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
         data['risk_score'] = round(risk_score, 2)
         data['risk_level'] = risk_level
     
