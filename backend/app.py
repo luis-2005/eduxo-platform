@@ -448,6 +448,24 @@ def update_student(student_id):
     
     return jsonify({'message': 'Aluno atualizado com sucesso'})
 
+@app.route('/api/stats')
+def get_stats():
+    """Retorna estatísticas gerais (Proxy para /api/dashboard)"""
+    data = get_dashboard_data().get_json()
+    return jsonify(data['stats'])
+
+@app.route('/api/classes')
+def get_classes():
+    """Retorna estatísticas por turma (Proxy para /api/dashboard)"""
+    data = get_dashboard_data().get_json()
+    return jsonify(data['classes'])
+
+@app.route('/api/trends')
+def get_trends():
+    """Retorna evolução temporal dos dados (Proxy para /api/dashboard)"""
+    data = get_dashboard_data().get_json()
+    return jsonify(data['trends'])
+
 @app.route('/api/dashboard')
 def get_dashboard_data():
     """Retorna todos os dados necessários para o dashboard em uma única requisição"""
@@ -603,6 +621,5 @@ def health():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 9000))
+    port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=False)
-
