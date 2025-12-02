@@ -107,7 +107,17 @@ def populate_initial_data():
             'Lucca Azevedo', 'Thiago Mendes', 'João Gabriel Correia', 'João Moraes', 'Alexandre Nunes',
             'Bruno Rezende', 'Benício Campos', 'Ryan Cardoso', 'Emanuel Farias', 'Fernando Vieira',
             'Joaquim Ramos', 'André Nogueira', 'Tomás Cunha', 'Francisco Batista', 'Rodrigo Melo',
-            'Igor Peixoto', 'Otávio Lopes', 'Augusto Torres', 'Marcelo Santana', 'Fábio Cruz'
+            'Igor Peixoto', 'Otávio Lopes', 'Augusto Torres', 'Marcelo Santana', 'Fábio Cruz',
+            'Benjamin Lima', 'Elias Santos', 'Theo Oliveira', 'Gael Costa', 'Noah Souza',
+            'Luan Ferreira', 'Breno Rodrigues', 'Ian Almeida', 'Caleb Lima', 'Levi Pereira',
+            'Raul Carvalho', 'Diego Ribeiro', 'Yuri Martins', 'Renan Araújo', 'Erick Dias',
+            'Victor Fernandes', 'Bryan Gomes', 'Kauã Cardoso', 'Arthur Rocha', 'Luiz Barbosa',
+            'Antônio Castro', 'Benício Nascimento', 'Erick Moreira', 'Felipe Pinto', 'Giovanni Monteiro',
+            'Hugo Freitas', 'Israel Duarte', 'Júlio Teixeira', 'Kevin Barros', 'Léo Cavalcanti',
+            'Marcos Azevedo', 'Nathan Mendes', 'Oliver Correia', 'Paulo Moraes', 'Quentin Nunes',
+            'Rian Rezende', 'Saulo Campos', 'Téo Cardoso', 'Uriel Farias', 'Wallace Vieira',
+            'Xavier Ramos', 'Yago Nogueira', 'Zion Cunha', 'Alan Batista', 'Bento Melo',
+            'César Peixoto', 'Davi Lopes', 'Erick Torres', 'Fábio Santana', 'Gael Cruz'
         ]
         
         nomes_femininos = [
@@ -120,36 +130,48 @@ def populate_initial_data():
             'Melissa Azevedo', 'Marina Mendes', 'Clara Correia', 'Cecília Moraes', 'Esther Nunes',
             'Emanuelly Rezende', 'Rebeca Campos', 'Ana Beatriz Cardoso', 'Lavínia Farias', 'Vitória Vieira',
             'Bianca Ramos', 'Catarina Nogueira', 'Larissa Cunha', 'Maria Fernanda Batista', 'Fernanda Melo',
-            'Amanda Peixoto', 'Alícia Lopes', 'Carolina Torres', 'Agatha Santana', 'Gabrielly Cruz'
+            'Amanda Peixoto', 'Alícia Lopes', 'Carolina Torres', 'Agatha Santana', 'Gabrielly Cruz',
+            'Elisa Lima', 'Maya Santos', 'Ayla Oliveira', 'Aurora Costa', 'Stella Souza',
+            'Pietra Ferreira', 'Milena Rodrigues', 'Liz Almeida', 'Antonella Lima', 'Maitê Pereira',
+            'Eliza Carvalho', 'Eloá Ribeiro', 'Maria Alice Martins', 'Luna Araújo', 'Duda Dias',
+            'Bella Fernandes', 'Sophie Gomes', 'Aurora Cardoso', 'Maria Vitória Rocha', 'Olívia Barbosa',
+            'Maria Helena Castro', 'Helena Nascimento', 'Laís Moreira', 'Maria Cecília Pinto', 'Brenda Monteiro',
+            'Evelyn Freitas', 'Hadassa Duarte', 'Maria Júlia Teixeira', 'Alana Barros', 'Elisa Cavalcanti',
+            'Jade Azevedo', 'Joana Mendes', 'Lorena Correia', 'Maria Luísa Moraes', 'Nina Nunes',
+            'Pérola Rezende', 'Stella Campos', 'Valentina Cardoso', 'Yasmin Farias', 'Zoe Vieira',
+            'Ana Ramos', 'Bárbara Nogueira', 'Camila Cunha', 'Diana Batista', 'Emilly Melo',
+            'Flávia Peixoto', 'Gisele Lopes', 'Ingrid Torres', 'Jéssica Santana', 'Kelly Cruz'
         ]
         
         todos_nomes = nomes_masculinos + nomes_femininos
         random.shuffle(todos_nomes)
+        # Garantir que temos pelo menos 200 nomes únicos
+        todos_nomes = todos_nomes[:200]
         
         classes = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C']
         
         # Criar 200 alunos com diferentes perfis de risco
         for i in range(200):
-            nome = todos_nomes[i % len(todos_nomes)]
+            nome = todos_nomes[i]
             
-            # 15% dos alunos em situação CRÍTICA (Alto Risco)
-            if i < 30:
+            # 20% dos alunos em situação CRÍTICA (Alto Risco) - Aumentado para garantir a visualização
+            if i < 40: # 20% de 200 = 40 alunos
                 attendance = random.uniform(30, 55)
                 grades = random.uniform(2.5, 4.5)
                 participation = random.uniform(20, 45)
                 absences = random.randint(20, 40)
                 socioeconomic = random.uniform(1.0, 2.0)
             
-            # 25% dos alunos em situação de RISCO MÉDIO
-            elif i < 80:
+            # 30% dos alunos em situação de RISCO MÉDIO
+            elif i < 100: # 30% de 200 = 60 alunos (40 a 99)
                 attendance = random.uniform(55, 75)
                 grades = random.uniform(4.5, 6.5)
                 participation = random.uniform(45, 65)
                 absences = random.randint(10, 20)
                 socioeconomic = random.uniform(2.0, 3.5)
             
-            # 60% dos alunos em situação NORMAL (Baixo Risco)
-            else:
+            # 50% dos alunos em situação NORMAL (Baixo Risco)
+            else: # 50% de 200 = 100 alunos (100 a 199)
                 attendance = random.uniform(75, 98)
                 grades = random.uniform(6.5, 10)
                 participation = random.uniform(65, 95)
@@ -225,6 +247,7 @@ def populate_initial_data():
                 cur.execute('''
                     INSERT INTO interventions (student_id, intervention_type, description, status)
                     VALUES (%s, %s, %s, %s)
+                    RETURNING id
                 ''', (
                     student_id,
                     random.choice(intervention_types),
@@ -425,12 +448,13 @@ def update_student(student_id):
     
     return jsonify({'message': 'Aluno atualizado com sucesso'})
 
-@app.route('/api/stats')
-def get_stats():
-    """Retorna estatísticas gerais"""
+@app.route('/api/dashboard')
+def get_dashboard_data():
+    """Retorna todos os dados necessários para o dashboard em uma única requisição"""
     conn = get_db_connection()
     cur = conn.cursor()
     
+    # 1. Estatísticas Gerais (stats)
     cur.execute('''
         SELECT 
             COUNT(*) as total_students,
@@ -442,17 +466,13 @@ def get_stats():
             AVG(risk_score) as avg_risk_score
         FROM students
     ''')
-    
     stats = cur.fetchone()
     
     # Alertas não resolvidos
     cur.execute('SELECT COUNT(*) as count FROM alerts WHERE resolved = FALSE')
     unresolved_alerts = cur.fetchone()['count']
     
-    cur.close()
-    conn.close()
-    
-    return jsonify({
+    stats_data = {
         'total_students': stats['total_students'],
         'high_risk': stats['high_risk'],
         'medium_risk': stats['medium_risk'],
@@ -461,14 +481,9 @@ def get_stats():
         'avg_grades': round(float(stats['avg_grades'] or 0), 1),
         'avg_risk_score': round(float(stats['avg_risk_score'] or 0), 1),
         'unresolved_alerts': unresolved_alerts
-    })
-
-@app.route('/api/classes')
-def get_classes():
-    """Retorna estatísticas por turma"""
-    conn = get_db_connection()
-    cur = conn.cursor()
+    }
     
+    # 2. Estatísticas por Turma (classes)
     cur.execute('''
         SELECT 
             class,
@@ -483,14 +498,11 @@ def get_classes():
         GROUP BY class
         ORDER BY class
     ''')
+    classes_raw = cur.fetchall()
     
-    classes = cur.fetchall()
-    cur.close()
-    conn.close()
-    
-    result = []
-    for cls in classes:
-        result.append({
+    classes_data = []
+    for cls in classes_raw:
+        classes_data.append({
             'class': cls['class'],
             'total_students': cls['total_students'],
             'high_risk': cls['high_risk'],
@@ -500,26 +512,23 @@ def get_classes():
             'avg_attendance': round(float(cls['avg_attendance'] or 0), 1),
             'avg_grades': round(float(cls['avg_grades'] or 0), 1)
         })
-    
-    return jsonify(result)
-
-@app.route('/api/trends')
-def get_trends():
-    """Retorna evolução temporal dos dados"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
+        
+    # 3. Evolução Temporal (trends)
     cur.execute('''
         SELECT * FROM monthly_stats
         ORDER BY month ASC
     ''')
+    trends_data = cur.fetchall()
     
-    trends = cur.fetchall()
     cur.close()
     conn.close()
     
-    return jsonify(trends)
-
+    return jsonify({
+        'stats': stats_data,
+        'classes': classes_data,
+        'trends': trends_data
+    })
+    
 @app.route('/api/alerts')
 def get_alerts():
     """Retorna alertas recentes"""
