@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUXO - Plataforma Inteligente de Prevenção de Evasão Escolar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
+    <div class="container mx-auto p-6">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                        <i class="fas fa-graduation-cap text-purple-400"></i>
+                        EDUXO
+                    </h1>
+                    <p class="text-purple-300">Plataforma Inteligente de Prevenção de Evasão Escolar</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="loadData()" class="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-sync"></i> Atualizar
+                    </button>
+                    <button onclick="exportReport()" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <label class="text-white mb-2 block text-sm">Filtrar por Turma</label>
+                <select id="class-filter" onchange="loadData()" class="w-full bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2">
+                    <option>Todas</option>
+                    <option>1A</option>
+                    <option>1B</option>
+                    <option>2A</option>
+                    <option>2B</option>
+                    <option>3A</option>
+                    <option>3B</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-white mb-2 block text-sm">Filtrar por Risco</label>
+                <select id="risk-filter" onchange="loadData()" class="w-full bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2">
+                    <option>Todos</option>
+                    <option>Alto</option>
+                    <option>Médio</option>
+                    <option>Baixo</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cards de Estatísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-6 text-white shadow-xl transform hover:scale-105 transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-100 text-sm mb-1">Alto Risco</p>
+                        <p class="text-3xl font-bold" id="high-risk">-</p>
+                    </div>
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-100"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-6 text-white shadow-xl transform hover:scale-105 transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-amber-100 text-sm mb-1">Médio Risco</p>
+                        <p class="text-3xl font-bold" id="medium-risk">-</p>
+                    </div>
+                    <i class="fas fa-exclamation-circle text-4xl text-amber-100"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-xl transform hover:scale-105 transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm mb-1">Baixo Risco</p>
+                        <p class="text-3xl font-bold" id="low-risk">-</p>
+                    </div>
+                    <i class="fas fa-check-circle text-4xl text-green-100"></i>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-xl transform hover:scale-105 transition">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm mb-1">Total Alunos</p>
+                        <p class="text-3xl font-bold" id="total-students">-</p>
+                    </div>
+                    <i class="fas fa-users text-4xl text-blue-100"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-slate-800 rounded-xl p-6 shadow-xl">
+                <h3 class="text-white text-xl font-semibold mb-4">Distribuição de Risco</h3>
+                <canvas id="riskChart"></canvas>
+            </div>
+            
+            <div class="bg-slate-800 rounded-xl p-6 shadow-xl">
+                <h3 class="text-white text-xl font-semibold mb-4">Risco por Turma</h3>
+                <canvas id="classChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabela de Alunos -->
+        <div class="bg-slate-800 rounded-xl p-6 shadow-xl">
+            <h3 class="text-white text-xl font-semibold mb-4">Alunos de Alto Risco</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-slate-700">
+                            <th class="text-purple-300 py-3 px-4">Nome</th>
+                            <th class="text-purple-300 py-3 px-4">Turma</th>
+                            <th class="text-purple-300 py-3 px-4">Frequência</th>
+                            <th class="text-purple-300 py-3 px-4">Nota</th>
+                            <th class="text-purple-300 py-3 px-4">Risco</th>
+                            <th class="text-purple-300 py-3 px-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table">
+                        <tr><td colspan="6" class="text-center text-white py-4">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-purple-300 text-sm">
+            <p class="font-semibold">EDUXO © 2025 - Plataforma Inteligente de Prevenção de Evasão Escolar</p>
+            <p class="mt-1">Desenvolvido por Luís Felipe Lopes & Jonathas Villalba</p>
+            <p class="mt-1">Projeto Integrador - Ciência de Dados | FATEC</p>
+        </div>
+    </div>
+
+    <script>
+        // A API está no mesmo servidor, então usamos path relativo
+        const API_URL = '';
+        
+        let riskChart, classChart;
+        let studentsData = [];
+
+        async function loadData() {
+            const classFilter = document.getElementById('class-filter').value;
+            const riskFilter = document.getElementById('risk-filter').value;
+            
+            try {
+                // Buscar estatísticas
+                const statsRes = await fetch(`${API_URL}/api/stats`);
+                const stats = await statsRes.json();
+                
+                document.getElementById('high-risk').textContent = stats.high_risk;
+                document.getElementById('medium-risk').textContent = stats.medium_risk;
+                document.getElementById('low-risk').textContent = stats.low_risk;
+                document.getElementById('total-students').textContent = stats.total_students;
+                
+                // Buscar alunos
+                const studentsRes = await fetch(`${API_URL}/api/students?class=${classFilter}&risk=${riskFilter}`);
+                studentsData = await studentsRes.json();
+                
+                // Buscar turmas
+                const classesRes = await fetch(`${API_URL}/api/classes`);
+                const classesData = await classesRes.json();
+                
+                updateCharts(stats, classesData);
+                updateTable(studentsData.filter(s => s.risk_level === 'Alto').slice(0, 10));
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar dados da API');
+            }
+        }
+
+        function updateCharts(stats, classesData) {
+            // Gráfico de Pizza
+            const ctxRisk = document.getElementById('riskChart').getContext('2d');
+            if (riskChart) riskChart.destroy();
+            
+            riskChart = new Chart(ctxRisk, {
+                type: 'pie',
+                data: {
+                    labels: ['Baixo Risco', 'Médio Risco', 'Alto Risco'],
+                    datasets: [{
+                        data: [stats.low_risk, stats.medium_risk, stats.high_risk],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
+            
+            // Gráfico de Barras
+            const ctxClass = document.getElementById('classChart').getContext('2d');
+            if (classChart) classChart.destroy();
+            
+            classChart = new Chart(ctxClass, {
+                type: 'bar',
+                data: {
+                    labels: classesData.map(c => c.class),
+                    datasets: [{
+                        label: 'Risco Médio (%)',
+                        data: classesData.map(c => c.avg_risk),
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        },
+                        x: {
+                            ticks: { color: '#9ca3af' },
+                            grid: { color: '#374151' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
+        }
+
+        function updateTable(students) {
+            const tbody = document.getElementById('students-table');
+            
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-white py-4">Nenhum aluno de alto risco</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = students.map(s => `
+                <tr class="border-b border-slate-700 hover:bg-slate-700 transition">
+                    <td class="text-white py-3 px-4">${s.name}</td>
+                    <td class="text-white py-3 px-4">${s.class}</td>
+                    <td class="text-white py-3 px-4">${s.attendance.toFixed(1)}%</td>
+                    <td class="text-white py-3 px-4">${s.grades.toFixed(1)}</td>
+                    <td class="text-white py-3 px-4">${s.risk_score.toFixed(1)}%</td>
+                    <td class="py-3 px-4">
+                        <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm">
+                            ${s.risk_level}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function exportReport() {
+            const highRiskStudents = studentsData.filter(s => s.risk_level === 'Alto');
+            
+            const report = `RELATÓRIO EDUXO - ${new Date().toLocaleDateString('pt-BR')}
+
+Total de Alunos: ${studentsData.length}
+Alto Risco: ${highRiskStudents.length}
+
+ALUNOS DE ALTO RISCO:
+${highRiskStudents.map(s => 
+    `- ${s.name} (${s.class}) - Risco: ${s.risk_score.toFixed(1)}% - Frequência: ${s.attendance.toFixed(1)}%`
+).join('\n')}
+
+Gerado por: EDUXO - Plataforma Inteligente de Prevenção de Evasão Escolar
+Desenvolvedores: Luís Felipe Lopes & Jonathas Villalba`;
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_eduxo_${Date.now()}.txt`;
+            a.click();
+        }
+
+        // Carregar ao iniciar
+        loadData();
+    </script>
+</body>
+</html>
