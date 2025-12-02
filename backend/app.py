@@ -96,14 +96,23 @@ def populate_initial_data():
     count = cur.fetchone()['count']
     
     if count == 0:
+        nomes_alunos = ['Miguel', 'Davi', 'Gabriel', 'Arthur', 'Lucas', 'Matheus', 'Pedro', 'Guilherme', 'Gustavo', 'Rafael', 'Felipe', 'Bernardo', 'Enzo', 'Nicolas', 'João Pedro', 'Cauã', 'Vitor', 'Eduardo', 'Daniel', 'Henrique', 'Murilo', 'Vinicius', 'Samuel', 'Pietro', 'João Vitor', 'Leonardo', 'Caio', 'Heitor', 'Lorenzo', 'Isaac', 'Lucca', 'Thiago', 'João Gabriel', 'João', 'Alexandre', 'Bruno', 'Benício', 'Ryan', 'Emanuel', 'Fernando', 'Joaquim', 'André', 'Tomás', 'Francisco', 'Rodrigo', 'Igor', 'Otávio', 'Augusto', 'Sophia', 'Alice', 'Julia', 'Isabella', 'Manuela', 'Laura', 'Luiza', 'Valentina', 'Giovanna', 'Maria Eduarda', 'Helena', 'Beatriz', 'Maria Luiza', 'Lara', 'Mariana', 'Nicole', 'Rafaela', 'Heloísa', 'Isadora', 'Lívia', 'Maria Clara', 'Ana Clara', 'Lorena', 'Gabriela', 'Yasmin', 'Isabelly', 'Sarah', 'Ana Julia', 'Letícia', 'Ana Luiza', 'Melissa', 'Marina', 'Clara', 'Cecília', 'Esther', 'Emanuelly', 'Rebeca', 'Ana Beatriz', 'Lavínia', 'Vitória', 'Bianca', 'Catarina', 'Larissa', 'Maria Fernanda', 'Fernanda', 'Amanda', 'Alícia', 'Carolina', 'Agatha', 'Gabrielly']
         classes = ['1A', '1B', '2A', '2B', '3A', '3B']
         
         for i in range(100):
-            attendance = random.uniform(40, 100)
-            grades = random.uniform(3, 10)
-            participation = random.uniform(30, 100)
-            absences = int((100 - attendance) * 0.4)
-            socioeconomic = random.uniform(1, 5)
+            # Lógica para criar dados críticos (10% dos alunos)
+            if i < 10: 
+                attendance = random.uniform(40, 60)
+                grades = random.uniform(3, 5)
+                participation = random.uniform(30, 50)
+                absences = random.randint(15, 30)
+                socioeconomic = random.uniform(1, 2)
+            else:
+                attendance = random.uniform(60, 100)
+                grades = random.uniform(5, 10)
+                participation = random.uniform(50, 100)
+                absences = int((100 - attendance) * 0.4)
+                socioeconomic = random.uniform(2, 5)
             
             risk_score = (
                 (100 - attendance) * 0.3 +
@@ -120,7 +129,7 @@ def populate_initial_data():
                 (name, class, attendance, grades, participation, absences, socioeconomic, risk_score, risk_level)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', (
-                f'Aluno {i + 1}',
+                random.choice(nomes_alunos),
                 random.choice(classes),
                 round(attendance, 2),
                 round(grades, 2),
@@ -139,7 +148,7 @@ def populate_initial_data():
                 ''', (
                     i + 1,
                     'Risco de Evasão',
-                    f'Aluno {i + 1} apresenta alto risco de evasão escolar',
+                    f'O aluno com ID {i + 1} apresenta alto risco de evasão escolar',
                     'Alta'
                 ))
         
