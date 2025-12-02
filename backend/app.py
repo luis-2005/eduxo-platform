@@ -24,15 +24,9 @@ def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
     
-    # Forçar DROP das tabelas para garantir a repopulação com os novos dados
-    cur.execute('DROP TABLE IF EXISTS alerts CASCADE')
-    cur.execute('DROP TABLE IF EXISTS interventions CASCADE')
-    cur.execute('DROP TABLE IF EXISTS monthly_stats CASCADE')
-    cur.execute('DROP TABLE IF EXISTS students CASCADE')
-    
     # Tabela de alunos
     cur.execute('''
-        CREATE TABLE students (
+        CREATE TABLE IF NOT EXISTS students (
             id SERIAL PRIMARY KEY,
             name VARCHAR(200) NOT NULL,
             class VARCHAR(10) NOT NULL,
@@ -50,7 +44,7 @@ def init_db():
     
     # Tabela de histórico de alertas
     cur.execute('''
-        CREATE TABLE alerts (
+        CREATE TABLE IF NOT EXISTS alerts (
             id SERIAL PRIMARY KEY,
             student_id INTEGER REFERENCES students(id),
             alert_type VARCHAR(50) NOT NULL,
@@ -63,7 +57,7 @@ def init_db():
     
     # Tabela de intervenções
     cur.execute('''
-        CREATE TABLE interventions (
+        CREATE TABLE IF NOT EXISTS interventions (
             id SERIAL PRIMARY KEY,
             student_id INTEGER REFERENCES students(id),
             intervention_type VARCHAR(100) NOT NULL,
@@ -76,7 +70,7 @@ def init_db():
     
     # Tabela de evolução mensal
     cur.execute('''
-        CREATE TABLE monthly_stats (
+        CREATE TABLE IF NOT EXISTS monthly_stats (
             id SERIAL PRIMARY KEY,
             month DATE NOT NULL,
             total_students INTEGER,
@@ -94,12 +88,10 @@ def init_db():
     conn.close()
 
 def populate_initial_data():
-    """Popula dados iniciais (agora sempre roda após o DROP)"""
+    """Popula dados iniciais se o banco estiver vazio"""
     conn = get_db_connection()
     cur = conn.cursor()
     
-    # Como as tabelas foram dropadas em init_db, a contagem será 0
-    # Não precisamos mais do if count == 0, mas vou manter a estrutura para clareza
     cur.execute('SELECT COUNT(*) as count FROM students')
     count = cur.fetchone()['count']
     
@@ -186,16 +178,18 @@ def populate_initial_data():
                 absences = random.randint(0, 10)
                 socioeconomic = random.uniform(3.0, 5.0)
             
-            # Cálculo do score de risco
+            # Cálculo do score de risco (Fórmula ajustada para ser mais agressiva)
+            # Aumentando o peso da Frequência e Notas
             risk_score = (
-                (100 - attendance) * 0.3 +
-                (10 - grades) * 10 * 0.25 +
-                (100 - participation) * 0.2 +
-                absences * 0.15 +
-                (6 - socioeconomic) * 4 * 0.1
+                (100 - attendance) * 0.4 +  # Peso maior para baixa frequência
+                (10 - grades) * 10 * 0.3 +  # Peso maior para notas baixas
+                (100 - participation) * 0.15 +
+                absences * 0.1 +
+                (6 - socioeconomic) * 4 * 0.05
             )
             
-            risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
+            # Ajustando os limites para garantir a classificação correta
+            risk_level = 'Alto' if risk_score > 70 else 'Médio' if risk_score > 40 else 'Baixo'
             
             cur.execute('''
                 INSERT INTO students 
@@ -423,14 +417,14 @@ def update_student(student_id):
         socioeconomic = data.get('socioeconomic', 3.0)
         
         risk_score = (
-            (100 - attendance) * 0.3 +
-            (10 - grades) * 10 * 0.25 +
-            (100 - participation) * 0.2 +
-            absences * 0.15 +
-            (6 - socioeconomic) * 4 * 0.1
+            (100 - attendance) * 0.4 +
+            (10 - grades) * 10 * 0.3 +
+            (100 - participation) * 0.15 +
+            absences * 0.1 +
+            (6 - socioeconomic) * 4 * 0.05
         )
         
-        risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
+        risk_level = 'Alto' if risk_score > 70 else 'Médio' if risk_score > 40 else 'Baixo'
         data['risk_score'] = round(risk_score, 2)
         data['risk_level'] = risk_level
     
