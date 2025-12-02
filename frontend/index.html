@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' );
         
         * {
             font-family: 'Inter', sans-serif;
@@ -220,50 +220,71 @@
                         <div class="bg-white/20 p-3 rounded-xl">
                             <i class="fas fa-users text-3xl"></i>
                         </div>
-                        <span class="text-xs font-semibold bg-blue-900/50 px-3 py-1 rounded-full">TOTAL</span>
+                        <span class="text-xs font-semibold bg-indigo-900/50 px-3 py-1 rounded-full">TOTAL</span>
                     </div>
                     <p class="text-blue-100 text-sm font-medium mb-1">Total de Alunos</p>
                     <p class="text-4xl font-bold mb-2" id="total-students">-</p>
-                    <p class="text-xs text-blue-100/80">cadastrados no sistema</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Métricas Adicionais -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="glass-effect rounded-2xl p-6 fade-in">
-                <div class="flex items-center gap-4">
-                    <div class="bg-purple-500/20 p-4 rounded-xl">
-                        <i class="fas fa-chart-line text-purple-400 text-2xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-purple-300 text-sm font-medium">Frequência Média</p>
-                        <p class="text-3xl font-bold text-white" id="avg-attendance">-</p>
-                    </div>
+                    <p class="text-xs text-blue-100/80">alunos monitorados</p>
                 </div>
             </div>
             
-            <div class="glass-effect rounded-2xl p-6 fade-in">
-                <div class="flex items-center gap-4">
-                    <div class="bg-indigo-500/20 p-4 rounded-xl">
-                        <i class="fas fa-star text-indigo-400 text-2xl"></i>
+            <!-- Card Frequência Média -->
+            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-purple-500/20 p-3 rounded-xl">
+                            <i class="fas fa-calendar-check text-purple-400 text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
                     </div>
-                    <div>
-                        <p class="text-indigo-300 text-sm font-medium">Nota Média</p>
-                        <p class="text-3xl font-bold text-white" id="avg-grades">-</p>
-                    </div>
+                    <p class="text-purple-300 text-sm font-medium mb-1">Frequência Média</p>
+                    <p class="text-4xl font-bold mb-2" id="avg-attendance">-</p>
+                    <p class="text-xs text-purple-300/80">em todas as turmas</p>
                 </div>
             </div>
             
-            <div class="glass-effect rounded-2xl p-6 fade-in">
-                <div class="flex items-center gap-4">
-                    <div class="bg-pink-500/20 p-4 rounded-xl">
-                        <i class="fas fa-bell text-pink-400 text-2xl"></i>
+            <!-- Card Nota Média -->
+            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-purple-500/20 p-3 rounded-xl">
+                            <i class="fas fa-graduation-cap text-purple-400 text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
                     </div>
-                    <div>
-                        <p class="text-pink-300 text-sm font-medium">Alertas Ativos</p>
-                        <p class="text-3xl font-bold text-white" id="unresolved-alerts">-</p>
+                    <p class="text-purple-300 text-sm font-medium mb-1">Nota Média</p>
+                    <p class="text-4xl font-bold mb-2" id="avg-grades">-</p>
+                    <p class="text-xs text-purple-300/80">em todas as disciplinas</p>
+                </div>
+            </div>
+            
+            <!-- Card Alertas Não Resolvidos -->
+            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-red-500/20 p-3 rounded-xl">
+                            <i class="fas fa-bell text-red-400 text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">PENDENTE</span>
                     </div>
+                    <p class="text-red-300 text-sm font-medium mb-1">Alertas Não Resolvidos</p>
+                    <p class="text-4xl font-bold mb-2" id="unresolved-alerts">-</p>
+                    <p class="text-xs text-red-300/80">necessitam de intervenção</p>
+                </div>
+            </div>
+            
+            <!-- Card Tendência de Risco -->
+            <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-green-500/20 p-3 rounded-xl">
+                            <i class="fas fa-chart-line text-green-400 text-3xl"></i>
+                        </div>
+                        <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">TENDÊNCIA</span>
+                    </div>
+                    <p class="text-green-300 text-sm font-medium mb-1">Tendência de Risco</p>
+                    <p class="text-4xl font-bold mb-2">Estável</p>
+                    <p class="text-xs text-green-300/80">últimos 30 dias</p>
                 </div>
             </div>
         </div>
@@ -392,7 +413,8 @@
                     <div class="mt-4 p-3 bg-purple-500/10 rounded-lg border border-purple-500/20">
                         <p class="text-purple-300 text-xs">
                             <i class="fas fa-university text-purple-400 mr-2"></i>
-                            Projeto Integrador - Ciência de Dados<br/>
+                            Projeto Integrador - Ciência de Dados  
+
                             <span class="text-purple-400 font-semibold">UNISO</span> | 2025
                         </p>
                     </div>
@@ -419,9 +441,12 @@
             const riskFilter = document.getElementById('risk-filter').value;
             
             try {
-                // Buscar estatísticas
-                const statsRes = await fetch(`${API_URL}/api/stats`);
-                const stats = await statsRes.json();
+                // Buscar dados consolidados do dashboard
+                const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
+                const dashboardData = await dashboardRes.json();
+                
+                const stats = dashboardData.stats;
+                const classesData = dashboardData.classes;
                 
                 document.getElementById('high-risk').textContent = stats.high_risk;
                 document.getElementById('medium-risk').textContent = stats.medium_risk;
@@ -431,16 +456,15 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
                 
-                // Buscar alunos
-                const studentsRes = await fetch(`${API_URL}/api/students?class=${classFilter}&risk=${riskFilter}`);
+                // Buscar alunos (sem filtro de risco, pois a tabela de alto risco precisa de todos)
+                const studentsRes = await fetch(`${API_URL}/api/students?class=${classFilter}`);
                 studentsData = await studentsRes.json();
                 
-                // Buscar turmas
-                const classesRes = await fetch(`${API_URL}/api/classes`);
-                const classesData = await classesRes.json();
-                
                 updateCharts(stats, classesData);
-                updateTable(studentsData.filter(s => s.risk_level === 'Alto').slice(0, 15));
+                
+                // Filtra e exibe APENAS os alunos de Alto Risco, respeitando o filtro de turma
+                const highRiskStudents = studentsData.filter(s => s.risk_level === 'Alto');
+                updateTable(highRiskStudents.slice(0, 15));
                 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -456,20 +480,11 @@
             riskChart = new Chart(ctxRisk, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Baixo Risco', 'Médio Risco', 'Alto Risco'],
+                    labels: ['Alto Risco', 'Médio Risco', 'Baixo Risco'],
                     datasets: [{
-                        data: [stats.low_risk, stats.medium_risk, stats.high_risk],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(239, 68, 68, 0.8)'
-                        ],
-                        borderColor: [
-                            'rgba(16, 185, 129, 1)',
-                            'rgba(245, 158, 11, 1)',
-                            'rgba(239, 68, 68, 1)'
-                        ],
-                        borderWidth: 2
+                        data: [stats.high_risk, stats.medium_risk, stats.low_risk],
+                        backgroundColor: ['#ef4444', '#f97316', '#10b981'],
+                        hoverOffset: 4
                     }]
                 },
                 options: {
@@ -477,13 +492,10 @@
                     maintainAspectRatio: true,
                     plugins: {
                         legend: {
-                            position: 'bottom',
                             labels: {
                                 color: '#fff',
-                                padding: 15,
                                 font: {
-                                    size: 12,
-                                    weight: '500'
+                                    size: 14
                                 }
                             }
                         },
