@@ -533,6 +533,9 @@
 
                 // 2. Buscar dados consolidados do dashboard
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
+                if (!dashboardRes.ok) {
+                    throw new Error(`Erro ao carregar dashboard: ${dashboardRes.statusText}`);
+                }
                 const dashboardData = await dashboardRes.json();
                 
                 const stats = dashboardData.stats;
@@ -549,6 +552,9 @@
                 
                 // 3. Buscar TODOS os alunos (sem filtros)
                 const studentsRes = await fetch(`${API_URL}/api/students`);
+                if (!studentsRes.ok) {
+                    throw new Error(`Erro ao carregar lista de alunos: ${studentsRes.statusText}`);
+                }
                 allStudentsData = await studentsRes.json();
                 
                 console.log('Total de alunos carregados:', allStudentsData.length);
