@@ -121,10 +121,6 @@
                         <span class="hidden lg:inline">Exportar</span>
                     </button>
                 </div>
-                
-                <button class="md:hidden text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
         </div>
     </nav>
@@ -161,9 +157,8 @@
 
         <!-- SEÇÃO: Dashboard -->
         <div id="section-dashboard">
-            <!-- Cards de Estatísticas com Design Moderno -->
+            <!-- Cards de Estatísticas -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Card Alto Risco -->
                 <div class="card-hover bg-gradient-to-br from-red-500 to-red-700 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <div class="relative z-10">
@@ -179,7 +174,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Médio Risco -->
                 <div class="card-hover bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <div class="relative z-10">
@@ -195,7 +189,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Baixo Risco -->
                 <div class="card-hover bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <div class="relative z-10">
@@ -211,7 +204,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Total -->
                 <div class="card-hover bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <div class="relative z-10">
@@ -230,7 +222,6 @@
 
             <!-- Cards Adicionais -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Card Frequência Média -->
                 <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
@@ -245,7 +236,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Nota Média -->
                 <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
@@ -260,7 +250,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Alertas Não Resolvidos -->
                 <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
@@ -275,7 +264,6 @@
                     </div>
                 </div>
                 
-                <!-- Card Tendência de Risco -->
                 <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
@@ -340,12 +328,11 @@
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
-                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="critical-students-table">
                             <tr>
-                                <td colspan="7" class="text-center py-8">
+                                <td colspan="6" class="text-center py-8">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="loading-spinner"></div>
                                         <p class="text-purple-300">Carregando dados...</p>
@@ -358,7 +345,7 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: Todos os Alunos (NOVA) -->
+        <!-- SEÇÃO: Todos os Alunos -->
         <div id="section-all-students" class="hidden-section">
             <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
                 <div class="flex items-center justify-between mb-6">
@@ -431,8 +418,8 @@
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Participação</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Faltas</th>
-                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
-                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nível de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Risco</th>
                             </tr>
                         </thead>
                         <tbody id="all-students-table">
@@ -450,7 +437,7 @@
             </div>
         </div>
 
-        <!-- Footer Profissional -->
+        <!-- Footer -->
         <footer class="mt-16 pt-8 border-t border-white/10">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
                 <div>
@@ -482,7 +469,7 @@
                         </li>
                         <li class="flex items-center gap-2">
                             <i class="fas fa-check text-green-400"></i>
-                            Cloud Deployment (Render)
+                            Cloud Deployment
                         </li>
                     </ul>
                 </div>
@@ -530,29 +517,23 @@
 
     <script>
         const API_URL = '';
-        let initialized = false;
-        
         let riskChart, classChart;
         let allStudentsData = [];
 
         // Função para alternar entre abas
         function showTab(tabName) {
-            // Esconder todas as seções
             document.getElementById('section-dashboard').classList.add('hidden-section');
             document.getElementById('section-analytics').classList.add('hidden-section');
             document.getElementById('section-critical').classList.add('hidden-section');
             document.getElementById('section-all-students').classList.add('hidden-section');
 
-            // Remover classe active de todos os botões
             document.querySelectorAll('.tab-button').forEach(btn => {
                 btn.classList.remove('active');
                 btn.classList.add('bg-purple-500/10', 'text-purple-300');
             });
 
-            // Mostrar seção selecionada
             document.getElementById('section-' + tabName).classList.remove('hidden-section');
 
-            // Adicionar classe active ao botão selecionado
             const activeBtn = document.getElementById('tab-' + tabName);
             activeBtn.classList.add('active');
             activeBtn.classList.remove('bg-purple-500/10', 'text-purple-300');
@@ -560,15 +541,7 @@
 
         async function loadData() {
             try {
-                // 1. Inicializar o banco de dados se ainda não foi feito
-                if (!initialized) {
-                    const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
-                    const initData = await initRes.json();
-                    console.log('Backend Initialization:', initData);
-                    initialized = true;
-                }
-
-                // 2. Buscar dados consolidados do dashboard
+                console.log('Carregando dados do dashboard...');
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
                 const dashboardData = await dashboardRes.json();
                 
@@ -584,33 +557,27 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
                 
-                // 3. Buscar TODOS os alunos (sem filtros)
+                console.log('Carregando todos os alunos...');
                 const studentsRes = await fetch(`${API_URL}/api/students`);
                 allStudentsData = await studentsRes.json();
                 
-                console.log('Total de alunos carregados:', allStudentsData.length);
-                console.log('Alunos de alto risco:', allStudentsData.filter(s => s.risk_level === 'Alto').length);
+                console.log(`Total de alunos: ${allStudentsData.length}`);
+                console.log(`Alunos de alto risco: ${allStudentsData.filter(s => s.risk_level === 'Alto').length}`);
                 
-                // 4. Atualizar gráficos
                 updateCharts(stats, classesData);
                 
-                // 5. Atualizar tabela de alunos críticos (APENAS Alto Risco)
                 const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
                 updateCriticalTable(highRiskStudents);
                 
-                // 6. Atualizar tabela de todos os alunos e aplicar filtros iniciais
                 updateAllStudentsTable(allStudentsData);
                 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                // Se houver erro, garantir que todas as tabelas mostrem o erro
-                showError('Erro ao conectar com o servidor ou inicializar o banco de dados. Verifique o console para mais detalhes.');
-                updateAllStudentsTable([]); // Garante que a tabela de todos os alunos saia do estado de carregamento infinito
+                showError('Erro ao conectar com o servidor. Verifique se o backend está rodando.');
             }
         }
 
         function updateCharts(stats, classesData) {
-            // Gráfico de Pizza - Distribuição de Risco
             const ctxRisk = document.getElementById('riskChart').getContext('2d');
             if (riskChart) riskChart.destroy();
             
@@ -631,26 +598,17 @@
                         legend: {
                             labels: {
                                 color: '#fff',
-                                font: {
-                                    size: 14
-                                }
+                                font: { size: 14 }
                             }
                         },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
                             padding: 12,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 13
-                            },
                             callbacks: {
                                 label: function(context) {
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                    return `${context.label}: ${context.parsed} alunos (${percentage}%)`;
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
                                 }
                             }
                         }
@@ -658,7 +616,6 @@
                 }
             });
             
-            // Gráfico de Barras - Risco por Turma
             const ctxClass = document.getElementById('classChart').getContext('2d');
             if (classChart) classChart.destroy();
             
@@ -684,25 +641,17 @@
                             max: 100,
                             ticks: {
                                 color: '#9ca3af',
-                                font: {
-                                    size: 11
-                                },
                                 callback: function(value) {
                                     return value + '%';
                                 }
                             },
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)',
-                                drawBorder: false
+                                color: 'rgba(255, 255, 255, 0.1)'
                             }
                         },
                         x: {
                             ticks: {
-                                color: '#9ca3af',
-                                font: {
-                                    size: 12,
-                                    weight: '500'
-                                }
+                                color: '#9ca3af'
                             },
                             grid: {
                                 display: false
@@ -712,22 +661,6 @@
                     plugins: {
                         legend: {
                             display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            padding: 12,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 13
-                            },
-                            callbacks: {
-                                label: function(context) {
-                                    return `Score: ${context.parsed.y.toFixed(1)}%`;
-                                }
-                            }
                         }
                     }
                 }
@@ -740,7 +673,7 @@
             if (students.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center py-12">
+                        <td colspan="6" class="text-center py-12">
                             <div class="flex flex-col items-center gap-3">
                                 <i class="fas fa-check-circle text-green-400 text-5xl"></i>
                                 <p class="text-white text-lg font-semibold">Nenhum aluno em situação crítica</p>
@@ -752,8 +685,8 @@
                 return;
             }
             
-            tbody.innerHTML = students.map((s, index) => `
-                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition group">
+            tbody.innerHTML = students.map(s => `
+                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition">
                     <td class="text-white py-4 px-4 font-medium">${s.name}</td>
                     <td class="text-white py-4 px-4">
                         <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm font-medium">${s.class}</span>
@@ -771,20 +704,13 @@
                         <span class="text-purple-300 text-sm">/10</span>
                     </td>
                     <td class="text-white py-4 px-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl font-bold text-red-400">${s.risk_score.toFixed(0)}%</span>
-                        </div>
+                        <span class="text-2xl font-bold text-red-400">${s.risk_score.toFixed(0)}%</span>
                     </td>
                     <td class="py-4 px-4">
-                        <span class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                        <span class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
                             <i class="fas fa-exclamation-triangle pulse-animation"></i>
                             ${s.risk_level}
                         </span>
-                    </td>
-                    <td class="py-4 px-4">
-                        <button onclick="viewStudentDetails(${s.id})" class="bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 px-4 py-2 rounded-lg text-sm font-medium transition">
-                            <i class="fas fa-eye mr-2"></i>Detalhes
-                        </button>
                     </td>
                 </tr>
             `).join('');
@@ -811,7 +737,7 @@
 
             document.getElementById('filtered-count').textContent = students.length;
             
-            tbody.innerHTML = students.map((s) => {
+            tbody.innerHTML = students.map(s => {
                 let riskBadgeClass = '';
                 let riskIcon = '';
                 
@@ -827,10 +753,10 @@
                 }
                 
                 return `
-                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition group">
+                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition">
                     <td class="text-white py-4 px-4 font-medium">${s.name}</td>
                     <td class="text-white py-4 px-4">
-                        <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm font-medium">${s.class}</span>
+                        <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm">${s.class}</span>
                     </td>
                     <td class="text-white py-4 px-4">
                         <div class="flex items-center gap-2">
@@ -854,7 +780,7 @@
                         <span class="text-lg font-bold">${s.risk_score.toFixed(0)}%</span>
                     </td>
                     <td class="py-4 px-4">
-                        <span class="inline-flex items-center gap-2 ${riskBadgeClass} text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        <span class="inline-flex items-center gap-2 ${riskBadgeClass} text-white px-3 py-1 rounded-full text-xs font-semibold">
                             <i class="fas ${riskIcon}"></i>
                             ${s.risk_level}
                         </span>
@@ -870,26 +796,19 @@
 
             let filtered = allStudentsData;
 
-            // Filtrar por nome
             if (searchTerm) {
                 filtered = filtered.filter(s => s.name.toLowerCase().includes(searchTerm));
             }
 
-            // Filtrar por turma
             if (classFilter) {
                 filtered = filtered.filter(s => s.class === classFilter);
             }
 
-            // Filtrar por risco
             if (riskFilter) {
                 filtered = filtered.filter(s => s.risk_level === riskFilter);
             }
 
             updateAllStudentsTable(filtered);
-        }
-
-        function viewStudentDetails(studentId) {
-            alert(`Funcionalidade de detalhes do aluno #${studentId} será implementada em breve.`);
         }
 
         function exportReport() {
@@ -957,7 +876,6 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
             
             criticalTbody.innerHTML = errorHtml;
             allTbody.innerHTML = errorHtml;
-            document.getElementById('filtered-count').textContent = '0';
         }
 
         // Carregar dados ao iniciar
