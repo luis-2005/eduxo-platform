@@ -518,6 +518,16 @@
 
         async function loadData() {
             try {
+                // NOVO: 0. Health Check para verificar se o servidor e o DB estão OK
+                const healthRes = await fetch(`${API_URL}/health`);
+                if (!healthRes.ok) {
+                    throw new Error(`Servidor inacessível ou erro no Health Check: ${healthRes.statusText}`);
+                }
+                const healthData = await healthRes.json();
+                if (healthData.status !== 'ok') {
+                    throw new Error(`Erro no Health Check: ${healthData.message || 'Verifique o log do servidor.'}`);
+                }
+                
                 // 1. Inicializar o banco de dados se ainda não foi feito
                 if (!initialized) {
                     const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
