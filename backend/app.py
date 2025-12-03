@@ -224,6 +224,7 @@ def populate_initial_data():
                     final_socioeconomic,
                     final_risk_score,
                     str(risk_level).strip() # Garantia de string pura na inserção
+                ))antia de string pura na inserção
                 ))
                 
                 student_id = cur.fetchone()['id']
