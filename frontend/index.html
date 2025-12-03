@@ -518,23 +518,21 @@
 
         async function loadData() {
             try {
-                // NOVO: 0. Health Check para verificar se o servidor e o DB estão OK
-                const healthRes = await fetch(`${API_URL}/health`);
-                if (!healthRes.ok) {
-                    throw new Error(`Servidor inacessível ou erro no Health Check: ${healthRes.statusText}`);
-                }
-                const healthData = await healthRes.json();
-                if (healthData.status !== 'ok') {
-                    throw new Error(`Erro no Health Check: ${healthData.message || 'Verifique o log do servidor.'}`);
-                }
-                
                 // 1. Inicializar o banco de dados se ainda não foi feito
                 if (!initialized) {
                     const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
+                    
+                    // Verifica se a resposta foi OK (status 200-299)
+                    if (!initRes.ok) {
+                        // Tenta ler o erro do JSON, se não conseguir, usa o statusText
+                        const errorData = await initRes.json().catch(() => ({}));
+                        throw new Error(errorData.error || `Falha na inicialização do banco de dados. Status: ${initRes.status} ${initRes.statusText}`);
+                    }
+                    
                     const initData = await initRes.json();
                     console.log('Backend Initialization:', initData);
                     
-                    if (initRes.status !== 200 || initData.status !== 'ok') {
+                    if (initData.status !== 'ok') {
                         throw new Error(initData.error || 'Falha desconhecida na inicialização do banco de dados.');
                     }
                     
@@ -544,7 +542,8 @@
                 // 2. Buscar dados consolidados do dashboard
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
                 if (!dashboardRes.ok) {
-                    throw new Error(`Erro ao carregar dashboard: ${dashboardRes.statusText}`);
+                    const errorData = await dashboardRes.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Erro ao carregar dashboard. Status: ${dashboardRes.status} ${dashboardRes.statusText}`);
                 }
                 const dashboardData = await dashboardRes.json();
                 
@@ -563,7 +562,8 @@
                 // 3. Buscar TODOS os alunos (sem filtros)
                 const studentsRes = await fetch(`${API_URL}/api/students`);
                 if (!studentsRes.ok) {
-                    throw new Error(`Erro ao carregar lista de alunos: ${studentsRes.statusText}`);
+                    const errorData = await studentsRes.json().catch(() => ({}));
+                    throw new Error(errorData.error || `Erro ao carregar lista de alunos. Status: ${studentsRes.status} ${studentsRes.statusText}`);
                 }
                 allStudentsData = await studentsRes.json();
                 
