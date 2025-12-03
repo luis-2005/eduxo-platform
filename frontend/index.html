@@ -563,7 +563,8 @@
 
     <script>
         const API_URL = '';
-        let initialized = false;q
+        let initialized = false;
+
         let riskChart, classChart, trendChart;
         let allStudentsData = [];
 
@@ -613,8 +614,14 @@
                 const classesData = dashboardData.classes;
 
                 // 3. Buscar dados de tendência
-                const trendsRes = await fetch(`${API_URL}/api/trends`);
-                const trendsData = await trendsRes.json();
+                let trendsData = [];
+                try {
+                    const trendsRes = await fetch(`${API_URL}/api/trends`);
+                    trendsData = await trendsRes.json();
+                } catch (e) {
+                    console.error("Erro ao buscar dados de tendência:", e);
+                    // Continua a execução mesmo com erro, mas com dados vazios
+                }
 
                 // Atualizar cards de estatísticas
                 document.getElementById('high-risk').textContent = stats.high_risk;
@@ -625,21 +632,26 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
 
-                // 3. Buscar TODOS os alunos (sem filtros)
-                const studentsRes = await fetch(`${API_URL}/api/students`);
-                allStudentsData = await studentsRes.json();
+                // 4. Buscar TODOS os alunos (sem filtros)
+                try {
+                    const studentsRes = await fetch(`${API_URL}/api/students`);
+                    allStudentsData = await studentsRes.json();
+                } catch (e) {
+                    console.error("Erro ao buscar dados de alunos:", e);
+                    allStudentsData = [];
+                }
 
                 console.log('Total de alunos carregados:', allStudentsData.length);
                 console.log('Alunos de alto risco:', allStudentsData.filter(s => s.risk_level === 'Alto').length);
-                // 4. Atualizar gráficos
+                // 5. Atualizar gráficos
                 updateCharts(stats, classesData, trendsData);
 
-                // 5. Atualizar tabela de alunos críticos (APENAS Alto Risco)
+                // 6. Atualizar tabela de alunos críticos (APENAS Alto Risco)
                 // Usando trim() e toLowerCase() para garantir que a comparação seja robusta
                 const highRiskStudents = allStudentsData.filter(s => s.risk_level.trim().toLowerCase() === 'alto');
                 updateCriticalTable(highRiskStudents);
 
-                // 6. Atualizar tabela de todos os alunos e aplicar filtros iniciais
+                // 7. Atualizar tabela de todos os alunos e aplicar filtros iniciais
                 updateAllStudentsTable(allStudentsData);
 
             } catch (error) {
@@ -773,8 +785,6 @@
             });
 
             // Gráfico de Linha - Histórico de Risco Agregado
-            if (trendChart) trendChart.destroy();
-
             trendChart = new Chart(ctxTrend, {
                 type: 'line',
                 data: {
@@ -1293,10 +1303,11 @@
                 console.error('Erro ao concluir intervenção:', error);
             }
         }
-            function exportReport() {
-                const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
 
-                const report = `═══════════════════════════════════════════════════════════
+        function exportReport() {
+            const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
+
+            const report = `═══════════════════════════════════════════════════════════
 RELATÓRIO EDUXO - ANÁLISE DE EVASÃO ESCOLAR
 Data: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}
 ═══════════════════════════════════════════════════════════
@@ -1311,14 +1322,14 @@ Alunos de Baixo Risco: ${allStudentsData.filter(s => s.risk_level === 'Baixo').l
 🚨 ALUNOS EM SITUAÇÃO CRÍTICA (ALTO RISCO)
 ────────────────────────────────────────────────────────────
 ${highRiskStudents.length > 0 ? highRiskStudents.map((s, i) =>
-                    `${i + 1}. ${s.name}
+                `${i + 1}. ${s.name}
    Turma: ${s.class}
    Score de Risco: ${s.risk_score.toFixed(1)}%
    Frequência: ${s.attendance.toFixed(1)}%
    Nota Média: ${s.grades.toFixed(1)}
    Faltas: ${s.absences}
    ────────────────────────────────────────────────────────────`
-                ).join('\n') : 'Nenhum aluno em situação crítica no momento.'}
+            ).join('\n') : 'Nenhum aluno em situação crítica no momento.'}
 
 ═══════════════════════════════════════════════════════════
 EDUXO - Plataforma Inteligente de Prevenção à Evasão Escolar
@@ -1326,22 +1337,22 @@ Desenvolvido por: Luís Felipe Lopes & Jonathas Villalba
 Projeto Integrador - Ciência de Dados | UNISO | 2025
 ═══════════════════════════════════════════════════════════`;
 
-                const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `relatorio_eduxo_${Date.now()}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relatorio_eduxo_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
-            function showError(message) {
-                const criticalTbody = document.getElementById('critical-students-table');
-                const allTbody = document.getElementById('all-students-table');
+        function showError(message) {
+            const criticalTbody = document.getElementById('critical-students-table');
+            const allTbody = document.getElementById('all-students-table');
 
-                const errorHtml = `
+            const errorHtml = `
                 <tr>
                     <td colspan="8" class="text-center py-12">
                         <div class="flex flex-col items-center gap-3">
@@ -1356,38 +1367,38 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
                 </tr>
             `;
 
-                criticalTbody.innerHTML = errorHtml;
-                allTbody.innerHTML = errorHtml;
-                document.getElementById('filtered-count').textContent = '0';
+            criticalTbody.innerHTML = errorHtml;
+            allTbody.innerHTML = errorHtml;
+            document.getElementById('filtered-count').textContent = '0';
+        }
+
+        // Carregar dados ao iniciar
+        loadData();
+
+        // Atualizar automaticamente a cada 5 minutos
+        setInterval(loadData, 300000);
+
+        async function clearData() {
+            if (!confirm('ATENÇÃO: Isso irá DELETAR TODOS os dados do banco de dados (alunos, alertas, intervenções) e repopular com dados de teste. Deseja continuar?')) {
+                return;
             }
 
-            // Carregar dados ao iniciar
-            loadData();
+            try {
+                const clearRes = await fetch(`${API_URL}/api/clear_db`, { method: 'POST' });
+                const clearData = await clearRes.json();
 
-            // Atualizar automaticamente a cada 5 minutos
-            setInterval(loadData, 300000);
-
-            async function clearData() {
-                if (!confirm('ATENÇÃO: Isso irá DELETAR TODOS os dados do banco de dados (alunos, alertas, intervenções) e repopular com dados de teste. Deseja continuar?')) {
-                    return;
+                if (clearRes.status !== 200 || clearData.status !== 'ok') {
+                    throw new Error(clearData.error || 'Falha desconhecida ao limpar o banco de dados.');
                 }
 
-                try {
-                    const clearRes = await fetch(`${API_URL}/api/clear_db`, { method: 'POST' });
-                    const clearData = await clearRes.json();
-
-                    if (clearRes.status !== 200 || clearData.status !== 'ok') {
-                        throw new Error(clearData.error || 'Falha desconhecida ao limpar o banco de dados.');
-                    }
-
-                    alert('Banco de dados limpo com sucesso! Recarregando dados...');
-                    initialized = false; // Força a inicialização na próxima chamada
-                    loadData();
-                } catch (error) {
-                    console.error('Erro ao limpar dados:', error);
-                    alert('ERRO ao limpar o banco de dados: ' + (error.message || 'Verifique o console.'));
-                }
+                alert('Banco de dados limpo com sucesso! Recarregando dados...');
+                initialized = false; // Força a inicialização na próxima chamada
+                loadData();
+            } catch (error) {
+                console.error('Erro ao limpar dados:', error);
+                alert('ERRO ao limpar o banco de dados: ' + (error.message || 'Verifique o console.'));
             }
+        }
     </script>
 
     <!-- Modal de Detalhes do Aluno -->
