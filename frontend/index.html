@@ -144,7 +144,7 @@
         <!-- Tabs de Navegação -->
         <div class="glass-effect rounded-2xl p-4 mb-8 fade-in">
             <div class="flex flex-wrap gap-3">
-                <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-button active px-6 py-3 rounded-xl font-semibold text-white">
+                <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-button active px-6 py-3 rounded-xl font-semibold">
                     <i class="fas fa-chart-line mr-2"></i>Dashboard
                 </button>
                 <button onclick="showTab('analytics')" id="tab-analytics" class="tab-button px-6 py-3 rounded-xl font-semibold text-purple-300 bg-purple-500/10">
@@ -344,11 +344,13 @@
                             </tr>
                         </thead>
                         <tbody id="critical-students-table">
+                            <!-- Conteúdo da tabela de alunos críticos será injetado aqui -->
                             <tr>
-                                <td colspan="7" class="text-center py-8">
+                                <td colspan="7" class="text-center py-12">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="loading-spinner"></div>
-                                        <p class="text-purple-300">Carregando dados...</p>
+                                        <p class="text-white text-lg font-semibold">Carregando dados de alunos críticos...</p>
+                                        <p class="text-purple-300 text-sm">Aguarde enquanto a análise preditiva é concluída.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -358,69 +360,51 @@
             </div>
         </div>
 
-        <!-- SEÇÃO: Todos os Alunos (NOVA) -->
+        <!-- SEÇÃO: Todos os Alunos -->
         <div id="section-all-students" class="hidden-section">
             <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
                 <div class="flex items-center justify-between mb-6">
                     <div>
                         <h3 class="text-white text-2xl font-bold mb-2">Todos os Alunos</h3>
-                        <p class="text-purple-300 text-sm">Busca e visualização completa de todos os alunos cadastrados</p>
+                        <p class="text-purple-300 text-sm">Lista completa de alunos matriculados e seus indicadores de risco</p>
                     </div>
                     <div class="bg-blue-500/20 p-3 rounded-xl">
                         <i class="fas fa-users text-blue-400 text-2xl"></i>
                     </div>
                 </div>
-
-                <!-- Barra de Busca e Filtros -->
-                <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-1">
-                        <label class="text-purple-300 text-sm font-medium mb-2 block">Buscar por Nome</label>
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="search-student" 
-                                placeholder="Digite o nome do aluno..." 
-                                onkeyup="filterAllStudents()"
-                                class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-                            >
-                            <i class="fas fa-search absolute left-3 top-4 text-purple-400"></i>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="text-purple-300 text-sm font-medium mb-2 block">Filtrar por Turma</label>
-                        <select id="all-class-filter" onchange="filterAllStudents()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                            <option value="">Todas as Turmas</option>
-                            <option value="1A">1A</option>
-                            <option value="1B">1B</option>
-                            <option value="1C">1C</option>
-                            <option value="2A">2A</option>
-                            <option value="2B">2B</option>
-                            <option value="2C">2C</option>
-                            <option value="3A">3A</option>
-                            <option value="3B">3B</option>
-                            <option value="3C">3C</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="text-purple-300 text-sm font-medium mb-2 block">Filtrar por Risco</label>
-                        <select id="all-risk-filter" onchange="filterAllStudents()" class="w-full bg-slate-800/80 text-white border border-purple-500/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
-                            <option value="">Todos os Níveis</option>
-                            <option value="Alto">Alto Risco</option>
-                            <option value="Médio">Médio Risco</option>
-                            <option value="Baixo">Baixo Risco</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Contador de Resultados -->
-                <div class="mb-4">
-                    <p class="text-purple-300 text-sm">
-                        <span id="filtered-count">0</span> alunos encontrados
-                    </p>
-                </div>
                 
+                <!-- Filtros e Busca -->
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <div class="relative flex-grow">
+                        <input type="text" id="search-student" onkeyup="filterAllStudents()" placeholder="Buscar por nome do aluno..." class="w-full bg-white/10 text-white placeholder-purple-300 border border-white/20 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-300"></i>
+                    </div>
+                    
+                    <select id="all-class-filter" onchange="filterAllStudents()" class="bg-white/10 text-white border border-white/20 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <option value="">Todas as Turmas</option>
+                        <option value="1A">1A</option>
+                        <option value="1B">1B</option>
+                        <option value="1C">1C</option>
+                        <option value="2A">2A</option>
+                        <option value="2B">2B</option>
+                        <option value="2C">2C</option>
+                        <option value="3A">3A</option>
+                        <option value="3B">3B</option>
+                        <option value="3C">3C</option>
+                    </select>
+                    
+                    <select id="all-risk-filter" onchange="filterAllStudents()" class="bg-white/10 text-white border border-white/20 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <option value="">Todos os Riscos</option>
+                        <option value="Alto">Alto Risco</option>
+                        <option value="Médio">Médio Risco</option>
+                        <option value="Baixo">Baixo Risco</option>
+                    </select>
+                    
+                    <div class="flex items-center bg-white/10 px-4 rounded-lg">
+                        <p class="text-purple-300 text-sm">Total Filtrado: <span id="filtered-count" class="text-white font-bold">0</span></p>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead>
@@ -432,15 +416,17 @@
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Participação</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Faltas</th>
                                 <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
-                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nível de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
                             </tr>
                         </thead>
                         <tbody id="all-students-table">
+                            <!-- Conteúdo da tabela de todos os alunos será injetado aqui -->
                             <tr>
-                                <td colspan="8" class="text-center py-8">
+                                <td colspan="8" class="text-center py-12">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="loading-spinner"></div>
-                                        <p class="text-purple-300">Carregando dados...</p>
+                                        <p class="text-white text-lg font-semibold">Carregando todos os alunos...</p>
+                                        <p class="text-purple-300 text-sm">Aguarde enquanto os dados são recuperados.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -605,7 +591,7 @@
                 console.error('Erro ao carregar dados:', error);
                 // Se houver erro, garantir que todas as tabelas mostrem o erro
                 showError('Erro ao conectar com o servidor ou inicializar o banco de dados. Verifique o console para mais detalhes.');
-                updateAllStudentsTable([]); // Garante que a tabela de todos os alunos saia do estado de carregamento infinito
+                // Não precisa chamar updateAllStudentsTable([]) aqui, pois showError já cuida das tabelas
             }
         }
 
@@ -700,12 +686,12 @@
                             ticks: {
                                 color: '#9ca3af',
                                 font: {
-                                    size: 12,
-                                    weight: '500'
+                                    size: 12
                                 }
                             },
                             grid: {
-                                display: false
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
                             }
                         }
                     },

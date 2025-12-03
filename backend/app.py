@@ -472,9 +472,9 @@ def get_dashboard():
         
         stats_data = {
             'total_students': stats['total_students'],
-            'high_risk': stats['high_risk'],
-            'medium_risk': stats['medium_risk'],
-            'low_risk': stats['low_risk'],
+            'high_risk': int(stats['high_risk'] or 0),
+            'medium_risk': int(stats['medium_risk'] or 0),
+            'low_risk': int(stats['low_risk'] or 0),
             'avg_attendance': round(float(stats['avg_attendance'] or 0), 1),
             'avg_grades': round(float(stats['avg_grades'] or 0), 1),
             'avg_risk_score': round(float(stats['avg_risk_score'] or 0), 1),
@@ -501,10 +501,10 @@ def get_dashboard():
         for cls in classes_raw:
             classes_data.append({
                 'class': cls['class'],
-                'total_students': cls['total_students'],
-                'high_risk': cls['high_risk'],
-                'medium_risk': cls['medium_risk'],
-                'low_risk': cls['low_risk'],
+                'total_students': int(cls['total_students'] or 0),
+                'high_risk': int(cls['high_risk'] or 0),
+                'medium_risk': int(cls['medium_risk'] or 0),
+                'low_risk': int(cls['low_risk'] or 0),
                 'avg_risk': round(float(cls['avg_risk'] or 0), 1),
                 'avg_attendance': round(float(cls['avg_attendance'] or 0), 1),
                 'avg_grades': round(float(cls['avg_grades'] or 0), 1)
