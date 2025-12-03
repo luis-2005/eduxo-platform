@@ -883,8 +883,89 @@
             updateAllStudentsTable(filtered);
         }
 
-        function viewStudentDetails(studentId) {
-            alert(`Funcionalidade de detalhes do aluno #${studentId} será implementada em breve.`);
+                async function viewStudentDetails(studentId) {
+            const modal = document.getElementById('student-details-modal');
+            const content = document.getElementById('student-details-content');
+            content.innerHTML = '<div class="flex justify-center items-center h-48"><div class="loading-spinner"></div></div>';
+            modal.classList.remove('hidden');
+
+            try {
+                const res = await fetch(`${API_URL}/api/students/${studentId}`);
+                if (!res.ok) {
+                    throw new Error('Falha ao buscar detalhes do aluno.');
+                }
+                const data = await res.json();
+                const student = data.student;
+                const alerts = data.alerts;
+                const interventions = data.interventions;
+
+                let alertsHtml = alerts.length > 0 ? alerts.map(a => `
+                    <div class="p-3 mb-2 rounded-lg bg-red-500/10 border border-red-500/30">
+                        <p class="font-semibold text-red-300">${a.alert_type} (${a.severity})</p>
+                        <p class="text-sm text-red-200">${a.message}</p>
+                        <p class="text-xs text-red-400 mt-1">Criado em: ${new Date(a.created_at).toLocaleDateString('pt-BR')}</p>
+                    </div>
+                `).join('') : '<p class="text-purple-300">Nenhum alerta ativo.</p>';
+
+                let interventionsHtml = interventions.length > 0 ? interventions.map(i => `
+                    <div class="p-3 mb-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                        <p class="font-semibold text-blue-300">${i.intervention_type} (${i.status})</p>
+                        <p class="text-sm text-blue-200">${i.description || 'Sem descrição.'}</p>
+                        <p class="text-xs text-blue-400 mt-1">Início: ${new Date(i.created_at).toLocaleDateString('pt-BR')}</p>
+                    </div>
+                `).join('') : '<p class="text-purple-300">Nenhuma intervenção registrada.</p>';
+
+                const studentDetailsHtml = `
+                    <div class="p-6">
+                        <h3 class="text-3xl font-bold gradient-text mb-4">${student.name}</h3>
+                        <p class="text-purple-300 mb-6">Turma: <span class="font-semibold text-white">${student.class}</span> | ID: <span class="font-semibold text-white">${student.id}</span></p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="p-4 rounded-xl bg-slate-800/50 border border-purple-500/20">
+                                <p class="text-sm text-purple-300">Score de Risco</p>
+                                <p class="text-2xl font-bold text-red-400">${student.risk_score.toFixed(0)}%</p>
+                                <span class="text-xs font-semibold text-white bg-red-600/50 px-2 py-1 rounded-full">${student.risk_level}</span>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-800/50 border border-purple-500/20">
+                                <p class="text-sm text-purple-300">Frequência</p>
+                                <p class="text-2xl font-bold text-white">${student.attendance.toFixed(1)}%</p>
+                                <p class="text-xs text-purple-300">Faltas: ${student.absences}</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-800/50 border border-purple-500/20">
+                                <p class="text-sm text-purple-300">Nota Média</p>
+                                <p class="text-2xl font-bold text-white">${student.grades.toFixed(1)}/10</p>
+                                <p class="text-xs text-purple-300">Participação: ${student.participation.toFixed(1)}%</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xl font-semibold text-white mb-3 border-b border-purple-500/30 pb-2">Alertas Recentes</h4>
+                                ${alertsHtml}
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-white mb-3 border-b border-purple-500/30 pb-2">Intervenções</h4>
+                                ${interventionsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                content.innerHTML = studentDetailsHtml;
+
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="p-6 text-center">
+                        <i class="fas fa-exclamation-circle text-red-400 text-4xl mb-3"></i>
+                        <p class="text-white text-lg font-semibold">Erro ao carregar detalhes</p>
+                        <p class="text-purple-300 text-sm">${error.message}</p>
+                    </div>
+                `;
+                console.error('Erro ao carregar detalhes do aluno:', error);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('student-details-modal').classList.add('hidden');
         }
 
         function exportReport() {
@@ -982,6 +1063,24 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
                 alert('ERRO ao limpar o banco de dados: ' + (error.message || 'Verifique o console.'));
             }
         }
-    </script>
-</body>
-</html>
+	    </script>
+
+        <!-- Modal de Detalhes do Aluno -->
+        <div id="student-details-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm transition-opacity">
+            <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform transition-all scale-100 border border-purple-500/30">
+                <!-- Header do Modal -->
+                <div class="sticky top-0 p-4 border-b border-purple-500/30 flex justify-between items-center bg-slate-900/90 backdrop-blur-md z-10">
+                    <h2 class="text-2xl font-bold text-white">Detalhes do Aluno</h2>
+                    <button onclick="closeModal()" class="text-purple-300 hover:text-white transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Conteúdo do Modal -->
+                <div id="student-details-content" class="p-0">
+                    <!-- Conteúdo será carregado via JavaScript -->
+                </div>
+            </div>
+        </div>
+	</body>
+	</html>
