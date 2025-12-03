@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
@@ -313,6 +314,41 @@ def initialize_app():
 def serve_frontend():
     """Serve o frontend"""
     return send_from_directory(app.static_folder, 'index.html')
+
+def clear_db():
+    """Limpa todas as tabelas para forçar a repopulação de dados"""
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # Deleta dados das tabelas filhas primeiro
+        cur.execute('DELETE FROM alerts;')
+        cur.execute('DELETE FROM interventions;')
+        cur.execute('DELETE FROM monthly_stats;')
+        # Deleta dados da tabela pai
+        cur.execute('DELETE FROM students;')
+        conn.commit()
+        cur.close()
+        print("✓ Banco de dados limpo com sucesso.")
+    except Exception as e:
+        print(f"ERRO ao limpar o banco de dados: {e}")
+        if conn:
+            conn.rollback()
+        raise e
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/api/clear_db', methods=['POST'])
+def clear_db_endpoint():
+    """Endpoint temporário para limpar o banco de dados"""
+    try:
+        clear_db()
+        return jsonify({'message': 'Banco de dados limpo com sucesso. Recarregue o frontend para repopular.', 'status': 'ok'})
+    except ConnectionError as ce:
+        return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 'clear_error'}), 500
 
 @app.route('/api/init', methods=['POST'])
 def initialize():
