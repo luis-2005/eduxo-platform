@@ -215,80 +215,82 @@
                     </div>
                 </div>
                 
-                <!-- Card Total Alunos -->
-                <div class="card-hover bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                <!-- Card Total -->
+                <div class="card-hover bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
                     <div class="relative z-10">
                         <div class="flex items-center justify-between mb-4">
                             <div class="bg-white/20 p-3 rounded-xl">
                                 <i class="fas fa-users text-3xl"></i>
                             </div>
-                            <span class="text-xs font-semibold bg-indigo-900/50 px-3 py-1 rounded-full">TOTAL</span>
+                            <span class="text-xs font-semibold bg-blue-900/50 px-3 py-1 rounded-full">TOTAL</span>
                         </div>
-                        <p class="text-purple-100 text-sm font-medium mb-1">Total de Alunos</p>
+                        <p class="text-blue-100 text-sm font-medium mb-1">Total de Alunos</p>
                         <p class="text-4xl font-bold mb-2" id="total-students">-</p>
-                        <p class="text-xs text-purple-100/80">alunos monitorados</p>
+                        <p class="text-xs text-blue-100/80">matriculados no sistema</p>
                     </div>
                 </div>
             </div>
-            
-            <!-- Cards de Métricas Adicionais -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+            <!-- Cards Adicionais -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Card Frequência Média -->
-                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-xl fade-in">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-blue-500/20 p-3 rounded-xl">
-                            <i class="fas fa-calendar-check text-blue-400 text-3xl"></i>
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-purple-500/20 p-3 rounded-xl">
+                                <i class="fas fa-calendar-check text-purple-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
                         </div>
-                        <div>
-                            <p class="text-blue-300 text-sm font-medium">Frequência Média</p>
-                            <p class="text-3xl font-bold" id="avg-attendance">-</p>
-                        </div>
+                        <p class="text-purple-300 text-sm font-medium mb-1">Frequência Média</p>
+                        <p class="text-4xl font-bold mb-2" id="avg-attendance">-</p>
+                        <p class="text-xs text-purple-300/80">em todas as turmas</p>
                     </div>
                 </div>
                 
-                <!-- Card Notas Médias -->
-                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-xl fade-in">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-yellow-500/20 p-3 rounded-xl">
-                            <i class="fas fa-book-open text-yellow-400 text-3xl"></i>
+                <!-- Card Nota Média -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-purple-500/20 p-3 rounded-xl">
+                                <i class="fas fa-graduation-cap text-purple-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-purple-900/50 px-3 py-1 rounded-full">MÉDIA</span>
                         </div>
-                        <div>
-                            <p class="text-yellow-300 text-sm font-medium">Média de Notas</p>
-                            <p class="text-3xl font-bold" id="avg-grades">-</p>
-                        </div>
+                        <p class="text-purple-300 text-sm font-medium mb-1">Nota Média</p>
+                        <p class="text-4xl font-bold mb-2" id="avg-grades">-</p>
+                        <p class="text-xs text-purple-300/80">em todas as disciplinas</p>
                     </div>
                 </div>
                 
-                <!-- Card Alertas Pendentes -->
-                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-xl fade-in">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-red-500/20 p-3 rounded-xl">
-                            <i class="fas fa-bell text-red-400 text-3xl"></i>
+                <!-- Card Alertas Não Resolvidos -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-red-500/20 p-3 rounded-xl">
+                                <i class="fas fa-bell text-red-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-red-900/50 px-3 py-1 rounded-full">PENDENTE</span>
                         </div>
-                        <div>
-                            <p class="text-red-300 text-sm font-medium">Alertas Pendentes</p>
-                            <p class="text-3xl font-bold" id="unresolved-alerts">-</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gráficos de Distribuição -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Gráfico de Distribuição de Risco -->
-                <div class="glass-effect rounded-2xl p-6 shadow-xl fade-in">
-                    <h3 class="text-xl font-semibold text-white mb-4">Distribuição de Risco</h3>
-                    <div class="h-80">
-                        <canvas id="riskChart"></canvas>
+                        <p class="text-red-300 text-sm font-medium mb-1">Alertas Não Resolvidos</p>
+                        <p class="text-4xl font-bold mb-2" id="unresolved-alerts">-</p>
+                        <p class="text-xs text-red-300/80">necessitam de intervenção</p>
                     </div>
                 </div>
                 
-                <!-- Gráfico de Risco por Turma -->
-                <div class="glass-effect rounded-2xl p-6 shadow-xl fade-in">
-                    <h3 class="text-xl font-semibold text-white mb-4">Risco Médio por Turma</h3>
-                    <div class="h-80">
-                        <canvas id="classChart"></canvas>
+                <!-- Card Tendência de Risco -->
+                <div class="card-hover glass-effect rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden fade-in">
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="bg-green-500/20 p-3 rounded-xl">
+                                <i class="fas fa-chart-line text-green-400 text-3xl"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-green-900/50 px-3 py-1 rounded-full">TENDÊNCIA</span>
+                        </div>
+                        <p class="text-green-300 text-sm font-medium mb-1">Tendência de Risco</p>
+                        <p class="text-4xl font-bold mb-2">Estável</p>
+                        <p class="text-xs text-green-300/80">últimos 30 dias</p>
                     </div>
                 </div>
             </div>
@@ -296,43 +298,63 @@
 
         <!-- SEÇÃO: Analytics -->
         <div id="section-analytics" class="hidden-section">
-            <div class="glass-effect rounded-2xl p-6 shadow-xl fade-in">
-                <h3 class="text-2xl font-bold text-white mb-6">Análise de Tendências</h3>
-                <div class="h-96">
-                    <canvas id="trendsChart"></canvas>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-white text-2xl font-bold">Distribuição de Risco</h3>
+                        <div class="bg-purple-500/20 p-2 rounded-lg">
+                            <i class="fas fa-chart-pie text-purple-400"></i>
+                        </div>
+                    </div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+                
+                <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-white text-2xl font-bold">Risco por Turma</h3>
+                        <div class="bg-indigo-500/20 p-2 rounded-lg">
+                            <i class="fas fa-chart-bar text-indigo-400"></i>
+                        </div>
+                    </div>
+                    <canvas id="classChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- SEÇÃO: Alunos Críticos -->
         <div id="section-critical" class="hidden-section">
-            <div class="glass-effect rounded-2xl p-6 shadow-xl fade-in">
-                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <i class="fas fa-exclamation-triangle text-red-500"></i>
-                    Alunos em Situação Crítica (Alto Risco)
-                </h3>
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-white text-2xl font-bold mb-2">Alunos em Situação Crítica</h3>
+                        <p class="text-purple-300 text-sm">Monitoramento prioritário e intervenção imediata</p>
+                    </div>
+                    <div class="bg-red-500/20 p-3 rounded-xl">
+                        <i class="fas fa-user-shield text-red-400 text-2xl"></i>
+                    </div>
+                </div>
                 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-purple-500/20">
+                    <table class="w-full">
                         <thead>
-                            <tr class="text-left text-purple-300 text-sm font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">Nome</th>
-                                <th class="py-3 px-4">Turma</th>
-                                <th class="py-3 px-4">Frequência</th>
-                                <th class="py-3 px-4">Notas</th>
-                                <th class="py-3 px-4">Score de Risco</th>
-                                <th class="py-3 px-4">Nível</th>
-                                <th class="py-3 px-4">Ações</th>
+                            <tr class="border-b border-purple-500/30">
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nome</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Turma</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Frequência</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="critical-students-table" class="divide-y divide-purple-500/20">
-                            <!-- Linha de carregamento -->
+                        <tbody id="critical-students-table">
+                            <!-- Conteúdo da tabela de alunos críticos será injetado aqui -->
                             <tr>
-                                <td colspan="8" class="text-center py-12">
+                                <td colspan="7" class="text-center py-12">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="loading-spinner"></div>
-                                        <p class="text-white text-lg font-semibold">Carregando alunos críticos...</p>
-                                        <p class="text-purple-300 text-sm">Aguarde enquanto os dados são recuperados.</p>
+                                        <p class="text-white text-lg font-semibold">Carregando dados de alunos críticos...</p>
+                                        <p class="text-purple-300 text-sm">Aguarde enquanto a análise preditiva é concluída.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -344,19 +366,25 @@
 
         <!-- SEÇÃO: Todos os Alunos -->
         <div id="section-all-students" class="hidden-section">
-            <div class="glass-effect rounded-2xl p-6 shadow-xl fade-in">
-                <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                    <i class="fas fa-users text-purple-400"></i>
-                    Todos os Alunos
-                    <span id="filtered-count" class="text-purple-300 text-lg ml-2">0</span>
-                    <span class="text-purple-300 text-lg">alunos exibidos</span>
-                </h3>
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-white text-2xl font-bold mb-2">Todos os Alunos</h3>
+                        <p class="text-purple-300 text-sm">Lista completa de alunos matriculados e seus indicadores de risco</p>
+                    </div>
+                    <div class="bg-blue-500/20 p-3 rounded-xl">
+                        <i class="fas fa-users text-blue-400 text-2xl"></i>
+                    </div>
+                </div>
                 
-                <!-- Filtros -->
+                <!-- Filtros e Busca -->
                 <div class="flex flex-wrap gap-4 mb-6">
-                    <input type="text" id="search-student" oninput="filterAllStudents()" placeholder="Buscar por nome..." class="flex-grow p-3 rounded-lg bg-white/10 text-white border border-white/20 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder-purple-300">
+                    <div class="relative flex-grow">
+                        <input type="text" id="search-student" onkeyup="filterAllStudents()" placeholder="Buscar por nome do aluno..." class="w-full bg-white/10 text-white placeholder-purple-300 border border-white/20 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-300"></i>
+                    </div>
                     
-                    <select id="all-class-filter" onchange="filterAllStudents()" class="p-3 rounded-lg bg-white/10 text-white border border-white/20 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
+                    <select id="all-class-filter" onchange="filterAllStudents()" class="bg-white/10 text-white border border-white/20 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
                         <option value="">Todas as Turmas</option>
                         <option value="1A">1A</option>
                         <option value="1B">1B</option>
@@ -369,30 +397,34 @@
                         <option value="3C">3C</option>
                     </select>
                     
-                    <select id="all-risk-filter" onchange="filterAllStudents()" class="p-3 rounded-lg bg-white/10 text-white border border-white/20 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition">
-                        <option value="">Todos os Níveis de Risco</option>
-                        <option value="Alto">Alto</option>
-                        <option value="Médio">Médio</option>
-                        <option value="Baixo">Baixo</option>
+                    <select id="all-risk-filter" onchange="filterAllStudents()" class="bg-white/10 text-white border border-white/20 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                        <option value="">Todos os Riscos</option>
+                        <option value="Alto">Alto Risco</option>
+                        <option value="Médio">Médio Risco</option>
+                        <option value="Baixo">Baixo Risco</option>
                     </select>
+                    
+                    <div class="flex items-center bg-white/10 px-4 rounded-lg">
+                        <p class="text-purple-300 text-sm">Total Filtrado: <span id="filtered-count" class="text-white font-bold">0</span></p>
+                    </div>
                 </div>
-                
+
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-purple-500/20">
+                    <table class="w-full">
                         <thead>
-                            <tr class="text-left text-purple-300 text-sm font-semibold uppercase tracking-wider">
-                                <th class="py-3 px-4">Nome</th>
-                                <th class="py-3 px-4">Turma</th>
-                                <th class="py-3 px-4">Frequência</th>
-                                <th class="py-3 px-4">Notas</th>
-                                <th class="py-3 px-4">Participação</th>
-                                <th class="py-3 px-4">Faltas</th>
-                                <th class="py-3 px-4">Score de Risco</th>
-                                <th class="py-3 px-4">Nível</th>
+                            <tr class="border-b border-purple-500/30">
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nome</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Turma</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Frequência</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Nota Média</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Participação</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Faltas</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Score de Risco</th>
+                                <th class="text-purple-300 py-4 px-4 text-left font-semibold">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="all-students-table" class="divide-y divide-purple-500/20">
-                            <!-- Linha de carregamento -->
+                        <tbody id="all-students-table">
+                            <!-- Conteúdo da tabela de todos os alunos será injetado aqui -->
                             <tr>
                                 <td colspan="8" class="text-center py-12">
                                     <div class="flex flex-col items-center gap-3">
@@ -521,18 +553,10 @@
                 // 1. Inicializar o banco de dados se ainda não foi feito
                 if (!initialized) {
                     const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
-                    
-                    // Verifica se a resposta foi OK (status 200-299)
-                    if (!initRes.ok) {
-                        // Tenta ler o erro do JSON, se não conseguir, usa o statusText
-                        const errorData = await initRes.json().catch(() => ({}));
-                        throw new Error(errorData.error || `Falha na inicialização do banco de dados. Status: ${initRes.status} ${initRes.statusText}`);
-                    }
-                    
                     const initData = await initRes.json();
                     console.log('Backend Initialization:', initData);
                     
-                    if (initData.status !== 'ok') {
+                    if (initRes.status !== 200 || initData.status !== 'ok') {
                         throw new Error(initData.error || 'Falha desconhecida na inicialização do banco de dados.');
                     }
                     
@@ -541,10 +565,6 @@
 
                 // 2. Buscar dados consolidados do dashboard
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
-                if (!dashboardRes.ok) {
-                    const errorData = await dashboardRes.json().catch(() => ({}));
-                    throw new Error(errorData.error || `Erro ao carregar dashboard. Status: ${dashboardRes.status} ${dashboardRes.statusText}`);
-                }
                 const dashboardData = await dashboardRes.json();
                 
                 const stats = dashboardData.stats;
@@ -561,10 +581,6 @@
                 
                 // 3. Buscar TODOS os alunos (sem filtros)
                 const studentsRes = await fetch(`${API_URL}/api/students`);
-                if (!studentsRes.ok) {
-                    const errorData = await studentsRes.json().catch(() => ({}));
-                    throw new Error(errorData.error || `Erro ao carregar lista de alunos. Status: ${studentsRes.status} ${studentsRes.statusText}`);
-                }
                 allStudentsData = await studentsRes.json();
                 
                 console.log('Total de alunos carregados:', allStudentsData.length);
@@ -599,37 +615,44 @@
                     labels: ['Alto Risco', 'Médio Risco', 'Baixo Risco'],
                     datasets: [{
                         data: [stats.high_risk, stats.medium_risk, stats.low_risk],
-                        backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
+                        backgroundColor: ['#ef4444', '#f97316', '#10b981'],
                         hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#d8b4fe' // purple-300
+                                color: '#fff',
+                                font: {
+                                    size: 14
+                                }
                             }
                         },
                         tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
                             callbacks: {
                                 label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed + ' alunos';
-                                    }
-                                    return label;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} alunos (${percentage}%)`;
                                 }
                             }
                         }
                     }
                 }
             });
-
+            
             // Gráfico de Barras - Risco por Turma
             const ctxClass = document.getElementById('classChart').getContext('2d');
             if (classChart) classChart.destroy();
@@ -641,119 +664,69 @@
                     datasets: [{
                         label: 'Score de Risco Médio',
                         data: classesData.map(c => c.avg_risk),
-                        backgroundColor: '#a78bfa', // purple-400
-                        borderColor: '#8b5cf6', // purple-500
-                        borderWidth: 1
+                        backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     scales: {
                         y: {
                             beginAtZero: true,
                             max: 100,
                             ticks: {
-                                color: '#d8b4fe'
+                                color: '#9ca3af',
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
                             },
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
                             }
                         },
                         x: {
                             ticks: {
-                                color: '#d8b4fe'
+                                color: '#9ca3af',
+                                font: {
+                                    size: 12
+                                }
                             },
                             grid: {
-                                display: false
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
                             }
                         }
                     },
                     plugins: {
                         legend: {
-                            labels: {
-                                color: '#d8b4fe'
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return `Score: ${context.parsed.y.toFixed(1)}%`;
+                                }
                             }
                         }
                     }
                 }
             });
-            
-            // Gráfico de Linha - Tendências Mensais (Apenas se houver dados)
-            const trendsData = dashboardData.trends;
-            if (trendsData && trendsData.length > 0) {
-                const ctxTrends = document.getElementById('trendsChart').getContext('2d');
-                
-                // Destruir gráfico anterior se existir
-                if (window.trendsChartInstance) {
-                    window.trendsChartInstance.destroy();
-                }
-                
-                const labels = trendsData.map(t => new Date(t.month).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }));
-                
-                window.trendsChartInstance = new Chart(ctxTrends, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Alto Risco',
-                                data: trendsData.map(t => t.high_risk),
-                                borderColor: '#ef4444', // red-500
-                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                                fill: true,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Médio Risco',
-                                data: trendsData.map(t => t.medium_risk),
-                                borderColor: '#f59e0b', // amber-500
-                                backgroundColor: 'rgba(245, 158, 11, 0.2)',
-                                fill: true,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Baixo Risco',
-                                data: trendsData.map(t => t.low_risk),
-                                borderColor: '#10b981', // emerald-500
-                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                                fill: true,
-                                tension: 0.4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: '#d8b4fe'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#d8b4fe'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: '#d8b4fe'
-                                }
-                            }
-                        }
-                    }
-                });
-            }
         }
 
         function updateCriticalTable(students) {
@@ -762,7 +735,7 @@
             if (students.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="text-center py-12">
+                        <td colspan="7" class="text-center py-12">
                             <div class="flex flex-col items-center gap-3">
                                 <i class="fas fa-check-circle text-green-400 text-5xl"></i>
                                 <p class="text-white text-lg font-semibold">Nenhum aluno em situação crítica</p>
@@ -911,92 +884,7 @@
         }
 
         function viewStudentDetails(studentId) {
-            fetch(`/api/students/${studentId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao carregar detalhes do aluno.');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    showStudentDetailsModal(data);
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar detalhes do aluno:', error);
-                    alert('Erro ao carregar detalhes do aluno. Verifique o console para mais detalhes.');
-                });
-        }
-
-        function closeStudentDetailsModal() {
-            document.getElementById('student-details-modal').classList.add('hidden');
-            document.getElementById('student-details-modal').classList.remove('flex');
-        }
-
-        function showStudentDetailsModal(data) {
-            const student = data.student;
-            const alerts = data.alerts;
-            const interventions = data.interventions;
-
-            // 1. Preencher dados do aluno
-            document.getElementById('modal-student-name').textContent = student.name;
-            document.getElementById('modal-student-class').textContent = student.class;
-            document.getElementById('modal-student-risk-score').textContent = `${student.risk_score.toFixed(2)}%`;
-            document.getElementById('modal-student-attendance').textContent = `${student.attendance.toFixed(1)}%`;
-            document.getElementById('modal-student-grades').textContent = student.grades.toFixed(1);
-            document.getElementById('modal-student-absences').textContent = student.absences;
-
-            const riskLevelElement = document.getElementById('modal-student-risk-level');
-            riskLevelElement.textContent = student.risk_level;
-            riskLevelElement.className = 'font-bold ' + (
-                student.risk_level === 'Alto' ? 'text-red-600' :
-                student.risk_level === 'Médio' ? 'text-yellow-600' :
-                'text-green-600'
-            );
-
-            // 2. Preencher Alertas
-            const alertsContainer = document.getElementById('modal-alerts-container');
-            alertsContainer.innerHTML = '';
-            if (alerts.length === 0) {
-                alertsContainer.innerHTML = '<p class="text-gray-500 italic">Nenhum alerta ativo para este aluno.</p>';
-            } else {
-                alerts.forEach(alert => {
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'p-3 rounded-lg border ' + (
-                        alert.severity === 'Alta' ? 'bg-red-50 border-red-200' :
-                        alert.severity === 'Média' ? 'bg-yellow-50 border-yellow-200' :
-                        'bg-blue-50 border-blue-200'
-                    );
-                    alertDiv.innerHTML = `
-                        <p class="font-semibold text-sm">${alert.alert_type} <span class="text-xs font-normal text-gray-500 ml-2">${new Date(alert.created_at).toLocaleDateString('pt-BR')}</span></p>
-                        <p class="text-gray-700 text-sm">${alert.message}</p>
-                    `;
-                    alertsContainer.appendChild(alertDiv);
-                });
-            }
-
-            // 3. Preencher Intervenções
-            const interventionsContainer = document.getElementById('modal-interventions-container');
-            interventionsContainer.innerHTML = '';
-            if (interventions.length === 0) {
-                interventionsContainer.innerHTML = '<p class="text-gray-500 italic">Nenhuma intervenção registrada.</p>';
-            } else {
-                interventions.forEach(intervention => {
-                    const interventionDiv = document.createElement('div');
-                    interventionDiv.className = 'p-3 rounded-lg border ' + (
-                        intervention.status === 'Pendente' ? 'bg-orange-50 border-orange-200' :
-                        'bg-green-50 border-green-200'
-                    );
-                    interventionDiv.innerHTML = `
-                        <p class="font-semibold text-sm">${intervention.intervention_type} - <span class="font-normal">${intervention.status}</span></p>
-                        <p class="text-gray-700 text-sm">${intervention.description || 'Sem descrição.'}</p>
-                    `;
-                    interventionsContainer.appendChild(interventionDiv);
-                });
-            }
-
-            // 4. Exibir a modal
-            document.getElementById('student-details-modal').classList.remove('hidden');
-            document.getElementById('student-details-modal').classList.add('flex');
+            alert(`Funcionalidade de detalhes do aluno #${studentId} será implementada em breve.`);
         }
 
         function exportReport() {
@@ -1095,45 +983,5 @@ Projeto Integrador - Ciência de Dados | UNISO | 2025
             }
         }
     </script>
-    <!-- Modal de Detalhes do Aluno -->
-    <div id="student-details-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center fade-in">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-8 transform transition-all scale-100">
-            <div class="flex justify-between items-center border-b pb-4 mb-4">
-                <h3 class="text-2xl font-bold text-purple-800" id="modal-student-name">Detalhes do Aluno</h3>
-                <button onclick="closeStudentDetailsModal()" class="text-gray-500 hover:text-gray-800 text-2xl">
-                    &times;
-                </button>
-            </div>
-            
-            <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-4">
-                <!-- Seção de Estatísticas Principais -->
-                <div class="grid grid-cols-2 gap-4 text-sm p-4 bg-gray-50 rounded-lg border">
-                    <div><span class="font-semibold text-gray-600">Turma:</span> <span id="modal-student-class" class="font-medium text-gray-800"></span></div>
-                    <div><span class="font-semibold text-gray-600">Nível de Risco:</span> <span id="modal-student-risk-level" class="font-bold"></span></div>
-                    <div><span class="font-semibold text-gray-600">Pontuação de Risco:</span> <span id="modal-student-risk-score" class="font-medium text-gray-800"></span></div>
-                    <div><span class="font-semibold text-gray-600">Frequência:</span> <span id="modal-student-attendance" class="font-medium text-gray-800"></span></div>
-                    <div><span class="font-semibold text-gray-600">Média de Notas:</span> <span id="modal-student-grades" class="font-medium text-gray-800"></span></div>
-                    <div><span class="font-semibold text-gray-600">Faltas:</span> <span id="modal-student-absences" class="font-medium text-gray-800"></span></div>
-                </div>
-
-                <!-- Seção de Alertas -->
-                <div>
-                    <h4 class="text-xl font-semibold text-red-700 mb-3 flex items-center"><i class="fas fa-bell mr-2"></i> Alertas Ativos</h4>
-                    <div id="modal-alerts-container" class="space-y-3">
-                        <!-- Alertas serão injetados aqui -->
-                    </div>
-                </div>
-
-                <!-- Seção de Intervenções -->
-                <div>
-                    <h4 class="text-xl font-semibold text-blue-700 mb-3 flex items-center"><i class="fas fa-handshake mr-2"></i> Intervenções Registradas</h4>
-                    <div id="modal-interventions-container" class="space-y-3">
-                        <!-- Intervenções serão injetadas aqui -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
