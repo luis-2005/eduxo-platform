@@ -173,11 +173,20 @@ def populate_initial_data():
                 
                 # 20% dos alunos em situação CRÍTICA (Alto Risco)
                 if i < 40:
-                    attendance = random.uniform(30, 55)
-                    grades = random.uniform(2.5, 4.5)
-                    participation = random.uniform(20, 45)
-                    absences = random.randint(20, 40)
-                    socioeconomic = random.uniform(1.0, 2.0)
+                    # Garantir que os primeiros 20 (que você quer ver) tenham indicadores bem ruins
+                    if i < 20:
+                        attendance = random.uniform(30, 40) # Frequência muito baixa
+                        grades = random.uniform(2.0, 3.5)   # Notas muito baixas
+                        participation = random.uniform(15, 30) # Participação muito baixa
+                        absences = random.randint(30, 50)   # Muitas faltas
+                        socioeconomic = random.uniform(1.0, 1.5) # Fator socioeconômico de alto risco
+                    else:
+                        # Os próximos 20 (para manter a proporção original)
+                        attendance = random.uniform(40, 55)
+                        grades = random.uniform(3.5, 4.5)
+                        participation = random.uniform(30, 45)
+                        absences = random.randint(20, 30)
+                        socioeconomic = random.uniform(1.5, 2.0)
                 
                 # 30% dos alunos em situação de RISCO MÉDIO
                 elif i < 100:
@@ -204,19 +213,15 @@ def populate_initial_data():
                     (6 - socioeconomic) * 4 * 0.1
                 )
                 
-                risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
-                
-                # FORÇAR 20 ALUNOS PARA ALTO RISCO PARA GARANTIR VISUALIZAÇÃO
-                if i < 20:
-                    risk_level = 'Alto'
-                    risk_score = max(risk_score, 65) # Garante que o score seja alto o suficiente
-                
                 # Arredondamento final dos valores antes da inserção
                 final_risk_score = round(risk_score, 2)
                 final_attendance = round(attendance, 2)
                 final_grades = round(grades, 2)
                 final_participation = round(participation, 2)
                 final_socioeconomic = round(socioeconomic, 1)
+                
+                # Recalcula o risk_level com o score final arredondado
+                risk_level = 'Alto' if final_risk_score > 60 else 'Médio' if final_risk_score > 35 else 'Baixo'
                 
                 cur.execute('''
                     INSERT INTO students 
