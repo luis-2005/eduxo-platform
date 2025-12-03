@@ -344,8 +344,19 @@ def get_students():
         query += ' ORDER BY risk_score DESC'
         
         cur.execute(query, params)
-        students = cur.fetchall()
+        students_raw = cur.fetchall()
         
+        # Converte campos numéricos para float para evitar erros de serialização no frontend
+        students = []
+        for s in students_raw:
+            s_converted = dict(s)
+            s_converted['attendance'] = float(s_converted['attendance'])
+            s_converted['grades'] = float(s_converted['grades'])
+            s_converted['participation'] = float(s_converted['participation'])
+            s_converted['socioeconomic'] = float(s_converted['socioeconomic'])
+            s_converted['risk_score'] = float(s_converted['risk_score'])
+            students.append(s_converted)
+            
         cur.close()
         return jsonify(students)
     except ConnectionError as ce:
@@ -365,10 +376,18 @@ def get_student(student_id):
         cur = conn.cursor()
         
         cur.execute('SELECT * FROM students WHERE id = %s', (student_id,))
-        student = cur.fetchone()
+        student_raw = cur.fetchone()
         
-        if not student:
+        if not student_raw:
             return jsonify({'error': 'Aluno não encontrado'}), 404
+            
+        # Converte campos numéricos para float para evitar erros de serialização no frontend
+        student = dict(student_raw)
+        student['attendance'] = float(student['attendance'])
+        student['grades'] = float(student['grades'])
+        student['participation'] = float(student['participation'])
+        student['socioeconomic'] = float(student['socioeconomic'])
+        student['risk_score'] = float(student['risk_score'])
         
         cur.execute('''
             SELECT * FROM alerts 
@@ -472,14 +491,14 @@ def get_dashboard():
         unresolved_alerts = cur.fetchone()['count']
         
         stats_data = {
-            'total_students': stats['total_students'],
+            'total_students': int(stats['total_students'] or 0),
             'high_risk': int(stats['high_risk'] or 0),
             'medium_risk': int(stats['medium_risk'] or 0),
             'low_risk': int(stats['low_risk'] or 0),
             'avg_attendance': round(float(stats['avg_attendance'] or 0), 1),
             'avg_grades': round(float(stats['avg_grades'] or 0), 1),
             'avg_risk_score': round(float(stats['avg_risk_score'] or 0), 1),
-            'unresolved_alerts': unresolved_alerts
+            'unresolved_alerts': int(unresolved_alerts or 0)
         }
         
         cur.execute('''
