@@ -21,7 +21,6 @@ def get_db_connection():
         return conn
     except Exception as e:
         print(f"ERRO DE CONEXÃO COM O BANCO DE DADOS: {e}")
-        # É crucial que este erro seja propagado para o endpoint /api/init
         raise ConnectionError("Falha ao conectar com o banco de dados. Verifique DATABASE_URL e a disponibilidade do serviço.") from e
 
 def init_db():
@@ -92,6 +91,7 @@ def init_db():
         
         conn.commit()
         cur.close()
+        print("✓ Tabelas do banco de dados criadas/verificadas com sucesso")
     except Exception as e:
         print(f"ERRO ao inicializar o banco de dados: {e}")
         if conn:
@@ -112,7 +112,7 @@ def populate_initial_data():
         count = cur.fetchone()['count']
         
         if count == 0:
-            print("Populando dados iniciais...")
+            print("⚙️  Populando dados iniciais...")
             # Lista expandida de nomes brasileiros
             nomes_masculinos = [
                 'Miguel Silva', 'Davi Santos', 'Gabriel Oliveira', 'Arthur Costa', 'Lucas Souza',
@@ -162,7 +162,6 @@ def populate_initial_data():
             
             todos_nomes = nomes_masculinos + nomes_femininos
             random.shuffle(todos_nomes)
-            # Garantir que temos pelo menos 200 nomes únicos
             todos_nomes = todos_nomes[:200]
             
             classes = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C']
@@ -171,8 +170,8 @@ def populate_initial_data():
             for i in range(200):
                 nome = todos_nomes[i]
                 
-                # 20% dos alunos em situação CRÍTICA (Alto Risco) - Aumentado para garantir a visualização
-                if i < 40: # 20% de 200 = 40 alunos
+                # 20% dos alunos em situação CRÍTICA (Alto Risco)
+                if i < 40:
                     attendance = random.uniform(30, 55)
                     grades = random.uniform(2.5, 4.5)
                     participation = random.uniform(20, 45)
@@ -180,7 +179,7 @@ def populate_initial_data():
                     socioeconomic = random.uniform(1.0, 2.0)
                 
                 # 30% dos alunos em situação de RISCO MÉDIO
-                elif i < 100: # 30% de 200 = 60 alunos (40 a 99)
+                elif i < 100:
                     attendance = random.uniform(55, 75)
                     grades = random.uniform(4.5, 6.5)
                     participation = random.uniform(45, 65)
@@ -188,7 +187,7 @@ def populate_initial_data():
                     socioeconomic = random.uniform(2.0, 3.5)
                 
                 # 50% dos alunos em situação NORMAL (Baixo Risco)
-                else: # 50% de 200 = 100 alunos (100 a 199)
+                else:
                     attendance = random.uniform(75, 98)
                     grades = random.uniform(6.5, 10)
                     participation = random.uniform(65, 95)
@@ -242,8 +241,6 @@ def populate_initial_data():
             # Criar dados de evolução mensal (últimos 6 meses)
             for i in range(6):
                 month = datetime.now() - timedelta(days=30*i)
-                
-                # Simular tendência de melhora ao longo do tempo
                 high_risk = random.randint(35 - i*2, 45 - i*2)
                 medium_risk = random.randint(55 - i, 65 - i)
                 low_risk = 200 - high_risk - medium_risk
@@ -263,9 +260,9 @@ def populate_initial_data():
                 ))
             
             conn.commit()
-            print("Dados iniciais populados com sucesso.")
+            print(f"✓ Dados iniciais populados com sucesso! {len(todos_nomes)} alunos criados.")
         else:
-            print(f"Banco de dados já contém {count} alunos. Pulando a população de dados.")
+            print(f"✓ Banco de dados já contém {count} alunos.")
         
         cur.close()
     except Exception as e:
@@ -277,6 +274,27 @@ def populate_initial_data():
         if conn:
             conn.close()
 
+# ========================================
+# INICIALIZAÇÃO AUTOMÁTICA AO INICIAR
+# ========================================
+def initialize_app():
+    """Inicializa o banco automaticamente quando a app inicia"""
+    try:
+        print("=" * 60)
+        print("🚀 INICIALIZANDO EDUXO")
+        print("=" * 60)
+        init_db()
+        populate_initial_data()
+        print("=" * 60)
+        print("✓ EDUXO inicializado com sucesso!")
+        print("=" * 60)
+    except Exception as e:
+        print(f"❌ ERRO na inicialização: {e}")
+        print("⚠️  A aplicação pode não funcionar corretamente!")
+
+# Chamar inicialização quando o módulo é carregado
+initialize_app()
+
 # Rotas da API
 @app.route('/')
 def serve_frontend():
@@ -285,7 +303,7 @@ def serve_frontend():
 
 @app.route('/api/init', methods=['POST'])
 def initialize():
-    """Inicializa o banco de dados"""
+    """Endpoint manual de inicialização (mantido para compatibilidade)"""
     try:
         init_db()
         populate_initial_data()
@@ -345,14 +363,12 @@ def get_student(student_id):
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Dados do aluno
         cur.execute('SELECT * FROM students WHERE id = %s', (student_id,))
         student = cur.fetchone()
         
         if not student:
             return jsonify({'error': 'Aluno não encontrado'}), 404
         
-        # Alertas do aluno
         cur.execute('''
             SELECT * FROM alerts 
             WHERE student_id = %s 
@@ -360,7 +376,6 @@ def get_student(student_id):
         ''', (student_id,))
         alerts = cur.fetchall()
         
-        # Intervenções do aluno
         cur.execute('''
             SELECT * FROM interventions 
             WHERE student_id = %s 
@@ -393,7 +408,6 @@ def update_student(student_id):
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Recalcular risk_score se os dados mudaram
         attendance = data.get('attendance')
         grades = data.get('grades')
         participation = data.get('participation')
@@ -440,7 +454,6 @@ def get_dashboard():
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # 1. Estatísticas Gerais (stats)
         cur.execute('''
             SELECT 
                 COUNT(*) as total_students,
@@ -468,7 +481,6 @@ def get_dashboard():
             'unresolved_alerts': unresolved_alerts
         }
         
-        # 2. Estatísticas por Turma (classes)
         cur.execute('''
             SELECT 
                 class,
@@ -498,7 +510,6 @@ def get_dashboard():
                 'avg_grades': round(float(cls['avg_grades'] or 0), 1)
             })
             
-        # 3. Evolução Temporal (trends)
         cur.execute('''
             SELECT * FROM monthly_stats
             ORDER BY month ASC
@@ -613,8 +624,14 @@ def health():
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute('SELECT 1')
+        cur.execute('SELECT COUNT(*) as count FROM students')
+        student_count = cur.fetchone()['count']
         cur.close()
-        return jsonify({'status': 'ok', 'database': 'connected'})
+        return jsonify({
+            'status': 'ok', 
+            'database': 'connected',
+            'students_in_db': student_count
+        })
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
     finally:
