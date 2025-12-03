@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
@@ -224,7 +223,7 @@ def populate_initial_data():
                     absences,
                     final_socioeconomic,
                     final_risk_score,
-                    risk_level
+                    str(risk_level).strip() # Garantia de string pura na inserção
                 ))
                 
                 student_id = cur.fetchone()['id']
@@ -518,9 +517,9 @@ def get_dashboard():
         cur.execute('''
             SELECT 
                 COUNT(*) as total_students,
-                SUM(CASE WHEN risk_level = 'Alto' THEN 1 ELSE 0 END) as high_risk,
-                SUM(CASE WHEN risk_level = 'Médio' THEN 1 ELSE 0 END) as medium_risk,
-                SUM(CASE WHEN risk_level = 'Baixo' THEN 1 ELSE 0 END) as low_risk,
+            SUM(CASE WHEN risk_level = 'Alto' THEN 1 ELSE 0 END) as high_risk,
+            SUM(CASE WHEN risk_level = 'Médio' THEN 1 ELSE 0 END) as medium_risk,
+            SUM(CASE WHEN risk_level = 'Baixo' THEN 1 ELSE 0 END) as low_risk,
                 AVG(attendance) as avg_attendance,
                 AVG(grades) as avg_grades,
                 AVG(risk_score) as avg_risk_score
