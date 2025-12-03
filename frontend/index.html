@@ -541,8 +541,29 @@
 
         async function loadData() {
             try {
-                console.log('Carregando dados do dashboard...');
+                console.log('🔄 Iniciando carregamento de dados...');
+                
+                // Verificar se o servidor está disponível
+                console.log('🔍 Verificando servidor...');
+                const healthRes = await fetch(`${API_URL}/health`);
+                if (!healthRes.ok) {
+                    throw new Error('Servidor não está respondendo');
+                }
+                const healthData = await healthRes.json();
+                console.log('✅ Servidor OK:', healthData);
+                
+                // Se não houver alunos, inicializar o banco
+                if (healthData.students_in_db === 0) {
+                    console.log('⚙️ Inicializando banco de dados...');
+                    await fetch(`${API_URL}/api/init`, { method: 'POST' });
+                    console.log('✅ Banco inicializado!');
+                }
+                
+                console.log('📊 Carregando dados do dashboard...');
                 const dashboardRes = await fetch(`${API_URL}/api/dashboard`);
+                if (!dashboardRes.ok) {
+                    throw new Error(`Erro HTTP: ${dashboardRes.status}`);
+                }
                 const dashboardData = await dashboardRes.json();
                 
                 const stats = dashboardData.stats;
@@ -557,23 +578,33 @@
                 document.getElementById('avg-grades').textContent = stats.avg_grades.toFixed(1);
                 document.getElementById('unresolved-alerts').textContent = stats.unresolved_alerts;
                 
-                console.log('Carregando todos os alunos...');
+                console.log('👥 Carregando todos os alunos...');
                 const studentsRes = await fetch(`${API_URL}/api/students`);
+                if (!studentsRes.ok) {
+                    throw new Error(`Erro ao buscar alunos: ${studentsRes.status}`);
+                }
                 allStudentsData = await studentsRes.json();
                 
-                console.log(`Total de alunos: ${allStudentsData.length}`);
-                console.log(`Alunos de alto risco: ${allStudentsData.filter(s => s.risk_level === 'Alto').length}`);
+                console.log(`✅ Total de alunos carregados: ${allStudentsData.length}`);
+                console.log(`🚨 Alunos de alto risco: ${allStudentsData.filter(s => s.risk_level === 'Alto').length}`);
+                console.log(`⚠️ Alunos de médio risco: ${allStudentsData.filter(s => s.risk_level === 'Médio').length}`);
+                console.log(`✓ Alunos de baixo risco: ${allStudentsData.filter(s => s.risk_level === 'Baixo').length}`);
                 
                 updateCharts(stats, classesData);
                 
                 const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
+                console.log(`📋 Atualizando tabela de alunos críticos com ${highRiskStudents.length} alunos...`);
                 updateCriticalTable(highRiskStudents);
                 
+                console.log(`📋 Atualizando tabela de todos os alunos...`);
                 updateAllStudentsTable(allStudentsData);
                 
+                console.log('✅ Todos os dados carregados com sucesso!');
+                
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                showError('Erro ao conectar com o servidor. Verifique se o backend está rodando.');
+                console.error('❌ ERRO DETALHADO:', error);
+                console.error('Stack trace:', error.stack);
+                showError(`Erro: ${error.message}. Verifique se o backend Flask está rodando em http://localhost:10000`);
             }
         }
 
