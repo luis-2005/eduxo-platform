@@ -355,6 +355,7 @@ def get_students():
             s_converted['participation'] = float(s_converted['participation'])
             s_converted['socioeconomic'] = float(s_converted['socioeconomic'])
             s_converted['risk_score'] = float(s_converted['risk_score'])
+            s_converted['risk_level'] = str(s_converted['risk_level']).strip() # Garante que seja string e remove espaços em branco
             students.append(s_converted)
             
         cur.close()
@@ -388,6 +389,7 @@ def get_student(student_id):
         student['participation'] = float(student['participation'])
         student['socioeconomic'] = float(student['socioeconomic'])
         student['risk_score'] = float(student['risk_score'])
+        student['risk_level'] = str(student['risk_level']).strip() # Garante que seja string e remove espaços em branco
         
         cur.execute('''
             SELECT * FROM alerts 
