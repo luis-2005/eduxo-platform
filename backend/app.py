@@ -299,6 +299,28 @@ def initialize_app():
 # A inicialização é feita pelo frontend através da rota /api/init para garantir que o banco de dados esteja pronto antes de carregar os dados.
 # initialize_app() # Comentado para evitar problemas de concorrência na inicialização do Render.
 
+# Função de cálculo de risco
+def calculate_risk_score(attendance, grades, participation, absences, socioeconomic):
+    """Calcula o score de risco de evasão com base nos 5 indicadores."""
+    # A fórmula original é:
+    # (100 - attendance) * 0.3 +
+    # (10 - grades) * 10 * 0.25 +
+    # (100 - participation) * 0.2 +
+    # absences * 0.15 +
+    # (6 - socioeconomic) * 4 * 0.1
+    
+    risk_score = (
+        (100 - attendance) * 0.3 +
+        (10 - grades) * 10 * 0.25 +
+        (100 - participation) * 0.2 +
+        absences * 0.15 +
+        (6 - socioeconomic) * 4 * 0.1
+    )
+    
+    risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
+    
+    return round(risk_score, 2), risk_level
+
 # Rotas da API
 @app.route('/')
 def serve_frontend():
@@ -475,14 +497,7 @@ def update_student(student_id):
         socioeconomic = data.get('socioeconomic')
         
         if all([attendance, grades, participation, absences, socioeconomic]):
-            risk_score = (
-                (100 - attendance) * 0.3 +
-                (10 - grades) * 10 * 0.25 +
-                (100 - participation) * 0.2 +
-                absences * 0.15 +
-                (6 - socioeconomic) * 4 * 0.1
-            )
-            risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
+            risk_score, risk_level = calculate_risk_score(attendance, grades, participation, absences, socioeconomic)
             
             cur.execute('''
                 UPDATE students 
@@ -491,10 +506,10 @@ def update_student(student_id):
                     risk_level = %s, updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
             ''', (attendance, grades, participation, absences, socioeconomic, 
-                  round(risk_score, 2), risk_level, student_id))
+                  risk_score, risk_level, student_id))
         
-        conn.commit        
-        return jsonify({'message': 'Aluno atualizado com sucesso', 'risk_score': final_risk_score, 'risk_level': final_risk_level}), 200
+        conn.commit()
+        return jsonify({'message': 'Aluno atualizado com sucesso', 'risk_score': risk_score, 'risk_level': risk_level}), 200
     except ConnectionError as ce:
         return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
     except Exception as e:
@@ -502,6 +517,8 @@ def update_student(student_id):
     finally:
         if conn:
             conn.close()
+
+
 
 @app.route('/api/students/<int:student_id>/interventions', methods=['POST'])
 def add_intervention(student_id):
@@ -647,6 +664,42 @@ def get_dashboard():
             'classes': classes_data,
             'trends': trends_data
         })
+    except ConnectionError as ce:
+        return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 'query_error'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/api/trends')
+def get_trends():
+    """Retorna dados históricos de risco (monthly_stats) para análise de tendência."""
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            SELECT 
+                TO_CHAR(month, 'YYYY-MM') as month_label,
+                high_risk,
+                medium_risk,
+                low_risk,
+                avg_attendance,
+                avg_grades
+            FROM monthly_stats
+            ORDER BY month ASC
+        ''')
+        trends = cur.fetchall()
+        
+        # Converte valores decimais para float para JSON
+        for trend in trends:
+            trend['avg_attendance'] = float(trend['avg_attendance'])
+            trend['avg_grades'] = float(trend['avg_grades'])
+            
+        cur.close()
+        return jsonify(trends)
     except ConnectionError as ce:
         return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
     except Exception as e:
