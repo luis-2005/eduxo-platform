@@ -586,7 +586,8 @@
                 updateCharts(stats, classesData);
                 
                 // 5. Atualizar tabela de alunos críticos (APENAS Alto Risco)
-                const highRiskStudents = allStudentsData.filter(s => s.risk_level === 'Alto');
+                // Usando trim() e toLowerCase() para garantir que a comparação seja robusta
+                const highRiskStudents = allStudentsData.filter(s => s.risk_level.trim().toLowerCase() === 'alto');
                 updateCriticalTable(highRiskStudents);
                 
                 // 6. Atualizar tabela de todos os alunos e aplicar filtros iniciais
