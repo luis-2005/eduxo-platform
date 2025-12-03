@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
@@ -168,50 +169,39 @@ def populate_initial_data():
             classes = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C']
             
             # Criar 200 alunos com diferentes perfis de risco
+            # Divisão: 20 Alto Risco, 60 Médio Risco, 120 Baixo Risco
+            num_alto = 20
+            num_medio = 60
+            
             for i in range(200):
                 nome = todos_nomes[i]
                 
-                # 20% dos alunos em situação CRÍTICA (Alto Risco)
-                if i < 40:
-                    # Garantir que os primeiros 20 (que você quer ver) tenham indicadores bem ruins
-                    if i < 20:
-                        attendance = random.uniform(30, 40) # Frequência muito baixa
-                        grades = random.uniform(2.0, 3.5)   # Notas muito baixas
-                        participation = random.uniform(15, 30) # Participação muito baixa
-                        absences = random.randint(30, 50)   # Muitas faltas
-                        socioeconomic = random.uniform(1.0, 1.5) # Fator socioeconômico de alto risco
-                    else:
-                        # Os próximos 20 (para manter a proporção original)
-                        attendance = random.uniform(40, 55)
-                        grades = random.uniform(3.5, 4.5)
-                        participation = random.uniform(30, 45)
-                        absences = random.randint(20, 30)
-                        socioeconomic = random.uniform(1.5, 2.0)
-                
-                # 30% dos alunos em situação de RISCO MÉDIO
-                elif i < 100:
-                    attendance = random.uniform(55, 75)
-                    grades = random.uniform(4.5, 6.5)
-                    participation = random.uniform(45, 65)
-                    absences = random.randint(10, 20)
+                if i < num_alto: # Alto Risco (20 alunos)
+                    risk_level = 'Alto'
+                    risk_score = random.uniform(65, 90)
+                    attendance = random.uniform(30, 50)
+                    grades = random.uniform(2.0, 4.0)
+                    participation = random.uniform(10, 30)
+                    absences = random.randint(25, 50)
+                    socioeconomic = random.uniform(1.0, 2.0)
+                    
+                elif i < num_alto + num_medio: # Médio Risco (60 alunos)
+                    risk_level = 'Médio'
+                    risk_score = random.uniform(40, 60)
+                    attendance = random.uniform(50, 70)
+                    grades = random.uniform(4.0, 6.0)
+                    participation = random.uniform(30, 60)
+                    absences = random.randint(10, 25)
                     socioeconomic = random.uniform(2.0, 3.5)
-                
-                # 50% dos alunos em situação NORMAL (Baixo Risco)
-                else:
+                    
+                else: # Baixo Risco (120 alunos)
+                    risk_level = 'Baixo'
+                    risk_score = random.uniform(10, 30)
                     attendance = random.uniform(75, 98)
                     grades = random.uniform(6.5, 10)
                     participation = random.uniform(65, 95)
                     absences = random.randint(0, 10)
-                    socioeconomic = random.uniform(3.0, 5.0)
-                
-                # Cálculo do score de risco
-                risk_score = (
-                    (100 - attendance) * 0.3 +
-                    (10 - grades) * 10 * 0.25 +
-                    (100 - participation) * 0.2 +
-                    absences * 0.15 +
-                    (6 - socioeconomic) * 4 * 0.1
-                )
+                    socioeconomic = random.uniform(3.5, 5.0)
                 
                 # Arredondamento final dos valores antes da inserção
                 final_risk_score = round(risk_score, 2)
@@ -219,9 +209,6 @@ def populate_initial_data():
                 final_grades = round(grades, 2)
                 final_participation = round(participation, 2)
                 final_socioeconomic = round(socioeconomic, 1)
-                
-                # Recalcula o risk_level com o score final arredondado
-                risk_level = 'Alto' if final_risk_score > 60 else 'Médio' if final_risk_score > 35 else 'Baixo'
                 
                 cur.execute('''
                     INSERT INTO students 
