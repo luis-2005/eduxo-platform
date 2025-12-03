@@ -21,6 +21,7 @@ def get_db_connection():
         return conn
     except Exception as e:
         print(f"ERRO DE CONEXÃO COM O BANCO DE DADOS: {e}")
+        # Usamos a exceção original do psycopg2 para manter o rastreamento, mas garantimos que a rota a capture
         raise ConnectionError("Falha ao conectar com o banco de dados. Verifique DATABASE_URL e a disponibilidade do serviço.") from e
 
 def init_db():
@@ -292,8 +293,8 @@ def initialize_app():
         print(f"❌ ERRO na inicialização: {e}")
         print("⚠️  A aplicação pode não funcionar corretamente!")
 
-# Chamar inicialização quando o módulo é carregado
-initialize_app()
+# A inicialização é feita pelo frontend através da rota /api/init para garantir que o banco de dados esteja pronto antes de carregar os dados.
+# initialize_app() # Comentado para evitar problemas de concorrência na inicialização do Render.
 
 # Rotas da API
 @app.route('/')

@@ -551,6 +551,11 @@
                     const initRes = await fetch(`${API_URL}/api/init`, { method: 'POST' });
                     const initData = await initRes.json();
                     console.log('Backend Initialization:', initData);
+                    
+                    if (initRes.status !== 200 || initData.status !== 'ok') {
+                        throw new Error(initData.error || 'Falha desconhecida na inicialização do banco de dados.');
+                    }
+                    
                     initialized = true;
                 }
 
@@ -590,8 +595,7 @@
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
                 // Se houver erro, garantir que todas as tabelas mostrem o erro
-                showError('Erro ao conectar com o servidor ou inicializar o banco de dados. Verifique o console para mais detalhes.');
-                // Não precisa chamar updateAllStudentsTable([]) aqui, pois showError já cuida das tabelas
+                showError(error.message || 'Erro ao conectar com o servidor ou inicializar o banco de dados. Verifique o console para mais detalhes.');
             }
         }
 
