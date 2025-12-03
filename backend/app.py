@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
@@ -212,6 +211,13 @@ def populate_initial_data():
                     risk_level = 'Alto'
                     risk_score = max(risk_score, 65) # Garante que o score seja alto o suficiente
                 
+                # Arredondamento final dos valores antes da inserção
+                final_risk_score = round(risk_score, 2)
+                final_attendance = round(attendance, 2)
+                final_grades = round(grades, 2)
+                final_participation = round(participation, 2)
+                final_socioeconomic = round(socioeconomic, 1)
+                
                 cur.execute('''
                     INSERT INTO students 
                     (name, class, attendance, grades, participation, absences, socioeconomic, risk_score, risk_level)
@@ -220,12 +226,12 @@ def populate_initial_data():
                 ''', (
                     nome,
                     random.choice(classes),
-                    round(attendance, 2),
-                    round(grades, 2),
-                    round(participation, 2),
+                    final_attendance,
+                    final_grades,
+                    final_participation,
                     absences,
-                    round(socioeconomic, 1),
-                    round(risk_score, 2),
+                    final_socioeconomic,
+                    final_risk_score,
                     risk_level
                 ))
                 
