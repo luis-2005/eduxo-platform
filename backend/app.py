@@ -493,19 +493,83 @@ def update_student(student_id):
             ''', (attendance, grades, participation, absences, socioeconomic, 
                   round(risk_score, 2), risk_level, student_id))
         
-        conn.commit()
-        cur.close()
-        return jsonify({'message': 'Aluno atualizado com sucesso'})
+        conn.commit        
+        return jsonify({'message': 'Aluno atualizado com sucesso', 'risk_score': final_risk_score, 'risk_level': final_risk_level}), 200
     except ConnectionError as ce:
         return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
     except Exception as e:
-        if conn:
-            conn.rollback()
         return jsonify({'error': str(e), 'status': 'update_error'}), 500
     finally:
         if conn:
             conn.close()
 
+@app.route('/api/students/<int:student_id>/interventions', methods=['POST'])
+def add_intervention(student_id):
+    """Adiciona uma nova intervenção para um aluno"""
+    data = request.json
+    intervention_type = data.get('intervention_type')
+    description = data.get('description')
+    
+    if not all([intervention_type, description]):
+        return jsonify({'error': 'Tipo e descrição da intervenção são obrigatórios'}), 400
+
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            INSERT INTO interventions (student_id, intervention_type, description, status)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id, created_at
+        ''', (student_id, intervention_type, description, 'Pendente'))
+        
+        new_intervention = cur.fetchone()
+        conn.commit()
+        cur.close()
+        
+        return jsonify({
+            'message': 'Intervenção adicionada com sucesso',
+            'id': new_intervention['id'],
+            'created_at': new_intervention['created_at'].isoformat()
+        }), 201
+    except ConnectionError as ce:
+        return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 'insert_error'}), 500
+    finally:
+        if conn:
+            conn.close()
+
+@app.route('/api/interventions/<int:intervention_id>/complete', methods=['PUT'])
+def complete_intervention(intervention_id):
+    """Marca uma intervenção como concluída"""
+    conn = None
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            UPDATE interventions
+            SET status = %s, completed_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+            RETURNING id
+        ''', ('Concluída', intervention_id))
+        
+        if cur.rowcount == 0:
+            return jsonify({'error': 'Intervenção não encontrada'}), 404
+            
+        conn.commit()
+        cur.close()
+        
+        return jsonify({'message': 'Intervenção marcada como concluída com sucesso', 'id': intervention_id}), 200
+    except ConnectionError as ce:
+        return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e), 'status': 'update_error'}), 500
+    finally:
+        if conn:
+            conn.close()
 @app.route('/api/dashboard')
 def get_dashboard():
     """Retorna dados agregados para o dashboard"""

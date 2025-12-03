@@ -907,13 +907,27 @@
                     </div>
                 `).join('') : '<p class="text-purple-300">Nenhum alerta ativo.</p>';
 
-                let interventionsHtml = interventions.length > 0 ? interventions.map(i => `
-                    <div class="p-3 mb-2 rounded-lg bg-blue-500/10 border border-blue-500/30">
-                        <p class="font-semibold text-blue-300">${i.intervention_type} (${i.status})</p>
-                        <p class="text-sm text-blue-200">${i.description || 'Sem descrição.'}</p>
-                        <p class="text-xs text-blue-400 mt-1">Início: ${new Date(i.created_at).toLocaleDateString('pt-BR')}</p>
-                    </div>
-                `).join('') : '<p class="text-purple-300">Nenhuma intervenção registrada.</p>';
+                let interventionsHtml = interventions.length > 0 ? interventions.map(i => {
+                    const statusClass = i.status === 'Concluída' ? 'bg-green-500/10 border-green-500/30' : 'bg-blue-500/10 border-blue-500/30';
+                    const statusTextClass = i.status === 'Concluída' ? 'text-green-300' : 'text-blue-300';
+                    const completeButton = i.status === 'Pendente' ? `
+                        <button onclick="completeIntervention(${i.id}, ${student.id})" class="text-xs font-semibold text-green-400 hover:text-green-300 transition ml-auto">
+                            <i class="fas fa-check-circle mr-1"></i> Concluir
+                        </button>
+                    ` : `<span class="text-xs text-green-400 ml-auto">Concluída em: ${new Date(i.completed_at).toLocaleDateString('pt-BR')}</span>`;
+
+                    return `
+                        <div class="p-3 mb-2 rounded-lg ${statusClass}">
+                            <div class="flex justify-between items-center">
+                                <p class="font-semibold ${statusTextClass}">${i.intervention_type} (${i.status})</p>
+                                ${i.status === 'Pendente' ? completeButton : ''}
+                            </div>
+                            <p class="text-sm text-blue-200">${i.description || 'Sem descrição.'}</p>
+                            <p class="text-xs text-blue-400 mt-1">Início: ${new Date(i.created_at).toLocaleDateString('pt-BR')}</p>
+                            ${i.status === 'Concluída' ? completeButton : ''}
+                        </div>
+                    `;
+                }).join('') : '<p class="text-purple-300">Nenhuma intervenção registrada.</p>';
 
                 const studentDetailsHtml = `
                     <div class="p-6">
@@ -944,7 +958,27 @@
                                 ${alertsHtml}
                             </div>
                             <div>
-                                <h4 class="text-xl font-semibold text-white mb-3 border-b border-purple-500/30 pb-2">Intervenções</h4>
+                                <h4 class="text-xl font-semibold text-white mb-3 border-b border-purple-500/30 pb-2 flex justify-between items-center">
+                                    Intervenções
+                                    <button onclick="showAddInterventionForm(${student.id})" class="text-sm font-medium bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg transition">
+                                        <i class="fas fa-plus mr-1"></i> Adicionar
+                                    </button>
+                                </h4>
+                                <div id="add-intervention-form-${student.id}" class="hidden p-4 mb-4 rounded-lg bg-slate-800/50 border border-purple-500/20">
+                                    <h5 class="text-lg font-semibold text-white mb-3">Nova Intervenção</h5>
+                                    <select id="intervention-type-${student.id}" class="w-full p-2 mb-3 rounded-lg bg-slate-700 text-white border border-purple-500/30">
+                                        <option value="Aconselhamento">Aconselhamento</option>
+                                        <option value="Reunião Familiar">Reunião Familiar</option>
+                                        <option value="Encaminhamento Psicológico">Encaminhamento Psicológico</option>
+                                        <option value="Plano de Estudos">Plano de Estudos</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                    <textarea id="intervention-description-${student.id}" rows="3" class="w-full p-2 mb-3 rounded-lg bg-slate-700 text-white border border-purple-500/30" placeholder="Descreva a intervenção realizada..."></textarea>
+                                    <div class="flex justify-end gap-2">
+                                        <button onclick="hideAddInterventionForm(${student.id})" class="text-sm font-medium bg-red-600/50 hover:bg-red-700/50 text-white px-3 py-1 rounded-lg transition">Cancelar</button>
+                                        <button onclick="addIntervention(${student.id})" class="text-sm font-medium bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg transition">Salvar Intervenção</button>
+                                    </div>
+                                </div>
                                 ${interventionsHtml}
                             </div>
                         </div>
@@ -966,6 +1000,75 @@
 
         function closeModal() {
             document.getElementById('student-details-modal').classList.add('hidden');
+        }
+
+        function showAddInterventionForm(studentId) {
+            document.getElementById(`add-intervention-form-${studentId}`).classList.remove('hidden');
+        }
+
+        function hideAddInterventionForm(studentId) {
+            document.getElementById(`add-intervention-form-${studentId}`).classList.add('hidden');
+        }
+
+        async function addIntervention(studentId) {
+            const type = document.getElementById(`intervention-type-${studentId}`).value;
+            const description = document.getElementById(`intervention-description-${studentId}`).value;
+
+            if (!description.trim()) {
+                alert('A descrição da intervenção é obrigatória.');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/students/${studentId}/interventions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        intervention_type: type,
+                        description: description
+                    })
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Falha ao adicionar intervenção.');
+                }
+
+                alert('Intervenção adicionada com sucesso!');
+                // Recarrega os detalhes do aluno para atualizar a lista de intervenções
+                viewStudentDetails(studentId); 
+
+            } catch (error) {
+                alert('ERRO ao adicionar intervenção: ' + error.message);
+                console.error('Erro ao adicionar intervenção:', error);
+            }
+        }
+
+        async function completeIntervention(interventionId, studentId) {
+            if (!confirm('Tem certeza que deseja marcar esta intervenção como CONCLUÍDA?')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/interventions/${interventionId}/complete`, {
+                    method: 'PUT'
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Falha ao concluir intervenção.');
+                }
+
+                alert('Intervenção concluída com sucesso!');
+                // Recarrega os detalhes do aluno para atualizar o status
+                viewStudentDetails(studentId); 
+
+            } catch (error) {
+                alert('ERRO ao concluir intervenção: ' + error.message);
+                console.error('Erro ao concluir intervenção:', error);
+            }
         }
 
         function exportReport() {
