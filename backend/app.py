@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import psycopg2
@@ -205,6 +206,11 @@ def populate_initial_data():
                 )
                 
                 risk_level = 'Alto' if risk_score > 60 else 'Médio' if risk_score > 35 else 'Baixo'
+                
+                # FORÇAR 20 ALUNOS PARA ALTO RISCO PARA GARANTIR VISUALIZAÇÃO
+                if i < 20:
+                    risk_level = 'Alto'
+                    risk_score = max(risk_score, 65) # Garante que o score seja alto o suficiente
                 
                 cur.execute('''
                     INSERT INTO students 
