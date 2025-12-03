@@ -518,26 +518,6 @@
         </footer>
     </div>
 
-    <!-- Modal de Detalhes do Aluno -->
-    <div id="student-details-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden transition-opacity duration-300">
-        <div class="bg-slate-800 rounded-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl transform transition-transform duration-300 scale-95">
-            <div class="flex justify-between items-start border-b border-purple-500/30 pb-4 mb-4">
-                <h3 class="text-3xl font-bold text-white" id="modal-student-name">Detalhes do Aluno</h3>
-                <button onclick="closeModal()" class="text-purple-300 hover:text-white transition">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
-            </div>
-
-            <div id="modal-content">
-                <!-- Conteúdo dinâmico será injetado aqui -->
-                <div class="text-center py-12">
-                    <div class="loading-spinner mx-auto"></div>
-                    <p class="text-white text-lg font-semibold mt-4">Carregando detalhes...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         const API_URL = '';
         let initialized = false;
@@ -767,45 +747,42 @@
                 return;
             }
             
-	            tbody.innerHTML = students.map((s, index) => {
-	                return `
-	                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition group">
-	                    <td class="text-white py-4 px-4 font-medium">${s.name}</td>
-	                    <td class="text-white py-4 px-4">
-	                        <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm font-medium">${s.class}</span>
-	                    </td>
-	                    <td class="text-white py-4 px-4">
-	                        <div class="flex items-center gap-2">
-	                            <div class="w-16 bg-slate-700 rounded-full h-2">
-	                                <div class="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" style="width: ${s.attendance}%"></div>
-	                            </div>
-	                            <span class="text-sm">${s.attendance.toFixed(1)}%</span>
-	                        </div>
-	                    </td>
-	                    <td class="text-white py-4 px-4">
-	                        <span class="font-semibold">${s.grades.toFixed(1)}</span>
-	                        <span class="text-purple-300 text-sm">/10</span>
-	                    </td>
-	                    <td class="text-white py-4 px-4">
-	                        <div class="flex items-center gap-2">
-	                            <span class="text-2xl font-bold text-red-400">${s.risk_score.toFixed(0)}%</span>
-	                        </div>
-	                    </td>
-	                    <td class="py-4 px-4">
-	                        <span class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-	                            <i class="fas fa-exclamation-triangle pulse-animation"></i>
-	                            ${s.risk_level}
-	                        </span>
-	                    </td>
-	                    <td class="py-4 px-4">
-	                        <button onclick="viewStudentDetails(${s.id})" class="bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 px-4 py-2 rounded-lg text-sm font-medium transition">
-	                            <i class="fas fa-eye mr-2"></i>Detalhes
-	                        </button>
-	                    </td>
-	                </tr>
-	            `
-	            }).join('');
-	        }
+            tbody.innerHTML = students.map((s, index) => `
+                <tr class="border-b border-purple-500/20 hover:bg-white/5 transition group">
+                    <td class="text-white py-4 px-4 font-medium">${s.name}</td>
+                    <td class="text-white py-4 px-4">
+                        <span class="bg-purple-500/20 px-3 py-1 rounded-lg text-sm font-medium">${s.class}</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 bg-slate-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full" style="width: ${s.attendance}%"></div>
+                            </div>
+                            <span class="text-sm">${s.attendance.toFixed(1)}%</span>
+                        </div>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <span class="font-semibold">${s.grades.toFixed(1)}</span>
+                        <span class="text-purple-300 text-sm">/10</span>
+                    </td>
+                    <td class="text-white py-4 px-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl font-bold text-red-400">${s.risk_score.toFixed(0)}%</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                            <i class="fas fa-exclamation-triangle pulse-animation"></i>
+                            ${s.risk_level}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <button onclick="viewStudentDetails(${s.id})" class="bg-purple-500/20 hover:bg-purple-500/40 text-purple-300 px-4 py-2 rounded-lg text-sm font-medium transition">
+                            <i class="fas fa-eye mr-2"></i>Detalhes
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function updateAllStudentsTable(students) {
@@ -906,166 +883,8 @@
             updateAllStudentsTable(filtered);
         }
 
-        // Funções de controle do Modal
-        function openModal() {
-            const modal = document.getElementById('student-details-modal');
-            modal.classList.remove('hidden');
-            // Adiciona a classe para animação de entrada
-            setTimeout(() => {
-                modal.querySelector('div:nth-child(1)').classList.remove('scale-95');
-                modal.querySelector('div:nth-child(1)').classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('student-details-modal');
-            // Adiciona a classe para animação de saída
-            modal.querySelector('div:nth-child(1)').classList.remove('scale-100');
-            modal.querySelector('div:nth-child(1)').classList.add('scale-95');
-            // Esconde o modal após a animação
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
-        function renderStudentDetails(data) {
-            const student = data.student;
-            const alerts = data.alerts;
-            const interventions = data.interventions;
-
-            document.getElementById('modal-student-name').textContent = `Detalhes do Aluno: ${student.name}`;
-
-            let riskBadgeClass = '';
-            let riskIcon = '';
-            if (student.risk_level === 'Alto') {
-                riskBadgeClass = 'bg-red-600';
-                riskIcon = 'fa-exclamation-triangle';
-            } else if (student.risk_level === 'Médio') {
-                riskBadgeClass = 'bg-orange-500';
-                riskIcon = 'fa-exclamation-circle';
-            } else {
-                riskBadgeClass = 'bg-green-600';
-                riskIcon = 'fa-check-circle';
-            }
-
-            const alertsHtml = alerts.length > 0 ? alerts.map(a => `
-                <div class="p-3 bg-red-500/10 rounded-lg border border-red-500/30 mb-2">
-                    <p class="text-red-300 font-semibold flex justify-between items-center">
-                        <span><i class="fas fa-bell mr-2"></i>${a.alert_type}</span>
-                        <span class="text-xs text-red-400">${new Date(a.created_at).toLocaleDateString('pt-BR').replace(/\//g, '-')}</span>
-                    </p>
-                    <p class="text-sm text-white/80 mt-1">${a.message}</p>
-                </div>
-            `).join('') : '<p class="text-purple-300">Nenhum alerta ativo para este aluno.</p>';
-
-            const interventionsHtml = interventions.length > 0 ? interventions.map(i => `
-                <div class="p-3 bg-purple-500/10 rounded-lg border border-purple-500/30 mb-2">
-                    <p class="text-purple-300 font-semibold flex justify-between items-center">
-                        <span><i class="fas fa-handshake mr-2"></i>${i.intervention_type}</span>
-                        <span class="text-xs ${i.status === 'Pendente' ? 'text-orange-400' : 'text-green-400'}">${i.status}</span>
-                    </p>
-                    <p class="text-sm text-white/80 mt-1">${i.description || 'Nenhuma descrição fornecida.'}</p>
-                </div>
-            `).join('') : '<p class="text-purple-300">Nenhuma intervenção registrada.</p>';
-
-            const contentHtml = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                    <!-- Card de Risco -->
-                    <div class="p-4 rounded-xl shadow-lg ${riskBadgeClass}">
-                        <p class="text-sm font-medium text-white/80">Nível de Risco</p>
-                        <p class="text-3xl font-bold text-white flex items-center gap-2 mt-1">
-                            <i class="fas ${riskIcon}"></i>
-                            ${student.risk_level}
-                        </p>
-                        <p class="text-sm text-white/80 mt-1">Score: ${student.risk_score.toFixed(1)}%</p>
-                    </div>
-                    <!-- Card de Turma -->
-                    <div class="p-4 rounded-xl shadow-lg bg-indigo-600">
-                        <p class="text-sm font-medium text-white/80">Turma</p>
-                        <p class="text-3xl font-bold text-white mt-1">${student.class}</p>
-                        <p class="text-sm text-white/80 mt-1">ID: ${student.id}</p>
-                    </div>
-                    <!-- Card de Frequência -->
-                    <div class="p-4 rounded-xl shadow-lg bg-blue-600">
-                        <p class="text-sm font-medium text-white/80">Frequência</p>
-                        <p class="text-3xl font-bold text-white mt-1">${student.attendance.toFixed(1)}%</p>
-                        <p class="text-sm text-white/80 mt-1">Faltas: ${student.absences}</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Seção de Indicadores -->
-                    <div class="glass-effect rounded-xl p-6">
-                        <h4 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-500/30 pb-2">Indicadores de Desempenho</h4>
-                        <div class="space-y-3 text-white">
-                            <p class="flex justify-between">
-                                <span class="font-medium">Nota Média:</span>
-                                <span class="font-bold text-lg">${student.grades.toFixed(1)}/10</span>
-                            </p>
-                            <p class="flex justify-between">
-                                <span class="font-medium">Participação:</span>
-                                <span class="font-bold text-lg">${student.participation.toFixed(1)}%</span>
-                            </p>
-                            <p class="flex justify-between">
-                                <span class="font-medium">Nível Socioeconômico:</span>
-                                <span class="font-bold text-lg">${student.socioeconomic.toFixed(1)}/5</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Seção de Intervenções -->
-                    <div class="glass-effect rounded-xl p-6">
-                        <h4 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-500/30 pb-2">Intervenções Registradas</h4>
-                        <div class="space-y-3">
-                            ${interventionsHtml}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção de Alertas -->
-                <div class="glass-effect rounded-xl p-6 mt-6">
-                    <h4 class="text-xl font-bold text-red-400 mb-4 border-b border-red-500/30 pb-2">Alertas Ativos</h4>
-                    <div class="space-y-3">
-                        ${alertsHtml}
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('modal-content').innerHTML = contentHtml;
-        }
-
-        async function viewStudentDetails(studentId) {
-            openModal();
-            document.getElementById('modal-content').innerHTML = \`
-                <div class="text-center py-12">
-                    <div class="loading-spinner mx-auto"></div>
-                    <p class="text-white text-lg font-semibold mt-4">Carregando detalhes do aluno #${studentId}...</p>
-                </div>
-            \`;
-
-            try {
-                const res = await fetch(\`${API_URL}/api/students/${studentId}\`);
-                const data = await res.json();
-
-                if (res.status !== 200) {
-                    throw new Error(data.error || 'Erro ao buscar detalhes do aluno.');
-                }
-
-                renderStudentDetails(data);
-
-            } catch (error) {
-                document.getElementById('modal-content').innerHTML = \`
-                    <div class="text-center py-12">
-                        <i class="fas fa-exclamation-circle text-red-400 text-5xl"></i>
-                        <p class="text-white text-lg font-semibold mt-4">Erro ao carregar detalhes</p>
-	                        <p class="text-purple-300 text-sm mt-2">${error.message}</p>
-	                        <button onclick="viewStudentDetails(${studentId})" class="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition">
-                            <i class="fas fa-sync mr-2"></i>Tentar novamente
-                        </button>
-                    </div>
-                \`;
-                console.error('Erro ao carregar detalhes do aluno:', error);
-            }
+        function viewStudentDetails(studentId) {
+            alert(`Funcionalidade de detalhes do aluno #${studentId} será implementada em breve.`);
         }
 
         function exportReport() {
