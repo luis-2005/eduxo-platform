@@ -297,104 +297,78 @@ def initialize_app():
         print("⚠️  A aplicação pode não funcionar corretamente!")
 
 # A inicialização é feita pelo frontend através da rota /api/init para garantir que o banco de dados esteja pronto antes de carregar os dados.
-# initialize_app() # Comentado para evitar problemas de concorrência na inicialização do Render.
 
-# Rotas da API
 @app.route('/')
-def serve_frontend():
-    """Serve o frontend"""
+def index():
+    """Serve o arquivo index.html do frontend"""
     return send_from_directory(app.static_folder, 'index.html')
 
+@app.route('/<path:path>')
+def serve_static_files(path):
+    """Serve outros arquivos estáticos (CSS, JS, etc.)"""
+    return send_from_directory(app.static_folder, path)
+
+@app.route('/api/clear_db', methods=['POST'])
 def clear_db():
-    """Limpa todas as tabelas para forçar a repopulação de dados"""
+    """Limpa e reinicializa o banco de dados (para fins de demonstração)"""
     conn = None
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        # Deleta dados das tabelas filhas primeiro
-        cur.execute('DELETE FROM alerts;')
-        cur.execute('DELETE FROM interventions;')
-        cur.execute('DELETE FROM monthly_stats;')
-        # Deleta dados da tabela pai
-        cur.execute('DELETE FROM students;')
+        
+        # Excluir dados e tabelas
+        cur.execute('DROP TABLE IF EXISTS alerts, interventions, monthly_stats, students CASCADE')
         conn.commit()
+        
+        # Recriar e popular
+        init_db()
+        populate_initial_data()
+        
         cur.close()
-        print("✓ Banco de dados limpo com sucesso.")
+        return jsonify({'status': 'ok', 'message': 'Banco de dados limpo e repopulado com sucesso'}), 200
     except Exception as e:
         print(f"ERRO ao limpar o banco de dados: {e}")
         if conn:
             conn.rollback()
-        raise e
+        return jsonify({'error': str(e), 'status': 'error'}), 500
     finally:
         if conn:
             conn.close()
 
-@app.route('/api/clear_db', methods=['POST'])
-def clear_db_endpoint():
-    """Endpoint temporário para limpar o banco de dados"""
-    try:
-        clear_db()
-        return jsonify({'message': 'Banco de dados limpo com sucesso. Recarregue o frontend para repopular.', 'status': 'ok'})
-    except ConnectionError as ce:
-        return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
-    except Exception as e:
-        return jsonify({'error': str(e), 'status': 'clear_error'}), 500
-
 @app.route('/api/init', methods=['POST'])
-def initialize():
-    """Endpoint manual de inicialização (mantido para compatibilidade)"""
+def api_init():
+    """Endpoint para inicializar o banco de dados a partir do frontend"""
     try:
         init_db()
         populate_initial_data()
-        return jsonify({'message': 'Banco de dados inicializado com sucesso', 'status': 'ok'})
+        return jsonify({'status': 'ok', 'message': 'Banco de dados inicializado com sucesso'}), 200
     except ConnectionError as ce:
         return jsonify({'error': str(ce), 'status': 'connection_error'}), 500
     except Exception as e:
-        return jsonify({'error': str(e), 'status': 'initialization_error'}), 500
+        return jsonify({'error': str(e), 'status': 'error'}), 500
 
 @app.route('/api/students')
 def get_students():
-    """Retorna lista de alunos com filtros opcionais"""
-    risk_level = request.args.get('risk_level')
-    class_name = request.args.get('class')
-    search = request.args.get('search')
-    
+    """Retorna a lista de todos os alunos"""
     conn = None
     try:
         conn = get_db_connection()
         cur = conn.cursor()
         
-        query = 'SELECT * FROM students WHERE 1=1'
-        params = []
-        
-        if risk_level:
-            query += ' AND risk_level = %s'
-            params.append(risk_level)
-        
-        if class_name:
-            query += ' AND class = %s'
-            params.append(class_name)
-        
-        if search:
-            query += ' AND LOWER(name) LIKE %s'
-            params.append(f'%{search.lower()}%')
-        
-        query += ' ORDER BY risk_score DESC'
-        
-        cur.execute(query, params)
+        cur.execute('SELECT * FROM students ORDER BY risk_score DESC')
         students_raw = cur.fetchall()
         
         # Converte campos numéricos para float para evitar erros de serialização no frontend
         students = []
         for s in students_raw:
-            s_converted = dict(s)
-            s_converted['attendance'] = float(s_converted['attendance'])
-            s_converted['grades'] = float(s_converted['grades'])
-            s_converted['participation'] = float(s_converted['participation'])
-            s_converted['socioeconomic'] = float(s_converted['socioeconomic'])
-            s_converted['risk_score'] = float(s_converted['risk_score'])
-            s_converted['risk_level'] = str(s_converted['risk_level']).strip() # Garante que seja string e remove espaços em branco
-            students.append(s_converted)
+            student = dict(s)
+            student['attendance'] = float(student['attendance'])
+            student['grades'] = float(student['grades'])
+            student['participation'] = float(student['participation'])
+            student['socioeconomic'] = float(student['socioeconomic'])
+            student['risk_score'] = float(student['risk_score'])
+            student['risk_level'] = str(student['risk_level']).strip() # Garante que seja string e remove espaços em branco
+            students.append(student)
             
         cur.close()
         return jsonify(students)
